@@ -1,8 +1,8 @@
 # Ignore nodejs modules
-/node_modules
+node_modules/
 
 # Ignore build files
-/dist
+dist/
 
 # Ignore log files
-/log
+logs/
