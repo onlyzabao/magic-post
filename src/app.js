@@ -6,9 +6,10 @@ import router from "./routes/router";
 import mongoConnect from "./utils/mongo.connector";
 import errorHandle from "./middlewares/errorHandle";
 import systemConfig from "config";
+import logger from "./utils/logger";
+
 const HOSTNAME = systemConfig.get('hostname') || 'localhost';
 const PORT = systemConfig.get('port') || 3000;
-import logger from "./utils/logger";
 
 mongoConnect();
 
@@ -35,6 +36,7 @@ app.get("/status", (request, response) => {
     response.send(status);
 });
 app.use(errorHandle)
+
 var server = http.createServer(app);
 server.listen(PORT, HOSTNAME, () => {
     logger.info(`Server started running at ${HOSTNAME}:${PORT}`);

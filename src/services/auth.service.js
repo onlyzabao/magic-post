@@ -11,7 +11,7 @@ import role from "../constants/role";
 import logger from "../utils/logger";
 
 class AuthService {
-    constructor() {}
+    constructor() { }
     async login(req, res, next) {
         try {
             const {
@@ -27,7 +27,7 @@ class AuthService {
                     message: error.details.map(x => x.message).join(", ")
                 });
             }
-            
+
             const result = await UserModel.findOne({
                 username: body.username
             });
@@ -98,12 +98,12 @@ class AuthService {
                 })
             }
             const uuid = helper.genUuid();
-                user = await UserModel.create({
-                    uuid: uuid,
-                    username: body.username,
-                    password: helper.generateHash(body.password),
-                    role: role.USER
-                });
+            user = await UserModel.create({
+                uuid: uuid,
+                username: body.username,
+                password: helper.generateHash(body.password),
+                role: role.USER
+            });
             const payload = {
                 uuid: user.uuid,
                 username: user.username,

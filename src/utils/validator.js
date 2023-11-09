@@ -1,7 +1,5 @@
 import Joi from "joi";
 
-
-
 class Validator {
     auth_register = (body) => {
         return Joi.object()

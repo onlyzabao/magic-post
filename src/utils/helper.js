@@ -3,7 +3,7 @@ import {
     v4 as uuidv4
 } from 'uuid';
 import md5 from "md5";
-const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
 let genUuid = function (password) {
     return uuidv4();
 }
@@ -16,6 +16,7 @@ let generateHash = function (password) {
 let toMd5 = function (str) {
     return md5(str)
 }
+const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 let randomString = function (length) {
     var result = '';
     for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];

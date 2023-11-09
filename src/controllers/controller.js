@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 import authorization from "./../middlewares/auth";
 import logger from "./../utils/logger";
+
 export default function (router, apis) {
     apis.forEach(element => {
         const controller = new element.controller();

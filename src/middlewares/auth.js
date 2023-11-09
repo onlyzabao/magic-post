@@ -35,7 +35,6 @@ const authorization = (roles, statuses) => async (req, res, next) => {
                         next();
                     } else {
                         if (err && err.name == 'TokenExpiredError') {
-
                             return res.status(403).json({
                                 ok: false,
                                 ...errorCode.AUTH.TOKEN_EXPIRED,
