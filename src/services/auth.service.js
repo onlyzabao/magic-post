@@ -8,7 +8,6 @@ import systemConfig from "config";
 import ms from "ms";
 import * as _ from "lodash";
 import role from "../constants/role";
-import constant from "../constants/constant";
 import logger from "../utils/logger";
 
 class AuthService {

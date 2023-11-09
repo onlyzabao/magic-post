@@ -59,3 +59,4 @@
 [2023-11-09T23:12:13.107] [INFO] file - Server started running at 0.0.0.0:3001
 [2023-11-09T23:12:23.254] [INFO] file - api {"method":"register","body":{"username":"danhpb3"}}
 [2023-11-09T23:12:29.817] [INFO] file - api {"method":"login","body":{"username":"danhpb3"}}
+[2023-11-09T23:20:52.355] [INFO] file - Server started running at 0.0.0.0:3001

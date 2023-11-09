@@ -14,7 +14,6 @@ var _config = _interopRequireDefault(require("config"));
 var _ms = _interopRequireDefault(require("ms"));
 var _ = _interopRequireWildcard(require("lodash"));
 var _role = _interopRequireDefault(require("../constants/role"));
-var _constant = _interopRequireDefault(require("../constants/constant"));
 var _logger = _interopRequireDefault(require("../utils/logger"));
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -126,7 +125,7 @@ class AuthService {
         data: {
           token: `Bearer ${token}`,
           payload: _objectSpread(_objectSpread({}, payload), {}, {
-            username: payload.username.slice(0, _constant.default.Username_length)
+            username: payload.username.slice(0, constant.Username_length)
           })
         }
       });
