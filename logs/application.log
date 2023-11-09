@@ -1,0 +1,61 @@
+[2023-11-08T23:49:42.415] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T10:08:40.475] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T10:14:11.865] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T14:08:35.117] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T14:08:52.363] [INFO] file - api {"method":"demo","body":{}}
+[2023-11-09T14:11:48.602] [INFO] file - api {"method":"demo","body":{}}
+[2023-11-09T22:13:52.465] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:14:47.914] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:22:08.800] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:35:34.704] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:37:49.490] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:50:23.455] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:50:37.787] [INFO] file - api {"method":"register","body":{"username":"danhpb"}}
+[2023-11-09T22:50:52.814] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:54:35.196] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:54:37.807] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:54:51.312] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:55:04.651] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:55:06.992] [INFO] file - api {"method":"login","body":{"username":"danhpb","password":"123"}}
+[2023-11-09T22:55:16.672] [INFO] file - api {"method":"login","body":{"username":"danhpb","password":"123"}}
+[2023-11-09T22:56:14.985] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:56:17.104] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:56:17.123] [INFO] file - debug
+[2023-11-09T22:56:33.847] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:56:35.620] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:56:40.039] [INFO] file - debug
+[2023-11-09T22:57:04.311] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:57:07.224] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:57:11.941] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:57:14.155] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:57:15.534] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:58:08.433] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:58:41.790] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:58:42.065] [INFO] file - debug 123
+[2023-11-09T22:59:33.242] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T22:59:35.143] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T22:59:37.999] [INFO] file - body.pass 123
+[2023-11-09T22:59:38.000] [INFO] file - res.pass undefined
+[2023-11-09T23:01:19.737] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T23:01:25.964] [INFO] file - api {"method":"register","body":{"username":"danhpb"}}
+[2023-11-09T23:01:48.155] [INFO] file - api {"method":"register","body":{"username":"danhpb"}}
+[2023-11-09T23:02:39.743] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T23:03:09.845] [INFO] file - api {"method":"register","body":{"username":"danhpb"}}
+[2023-11-09T23:08:21.428] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T23:08:26.172] [INFO] file - api {"method":"register","body":{"username":"danhpb"}}
+[2023-11-09T23:09:04.975] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T23:09:07.276] [INFO] file - api {"method":"register","body":{"username":"danhpb"}}
+[2023-11-09T23:09:56.411] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T23:10:00.940] [INFO] file - api {"method":"register","body":{"username":"danhpb"}}
+[2023-11-09T23:10:38.706] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T23:10:45.343] [INFO] file - api {"method":"register","body":{"username":"danhpb"}}
+[2023-11-09T23:10:56.442] [INFO] file - api {"method":"register","body":{"username":"danhpb2"}}
+[2023-11-09T23:11:07.511] [INFO] file - api {"method":"login","body":{"username":"danhpb2"}}
+[2023-11-09T23:11:07.761] [INFO] file - body.pass 123
+[2023-11-09T23:11:07.762] [INFO] file - res.pass 123
+[2023-11-09T23:11:13.723] [INFO] file - api {"method":"login","body":{"username":"danhpb"}}
+[2023-11-09T23:11:14.000] [INFO] file - body.pass 123
+[2023-11-09T23:11:14.001] [INFO] file - res.pass 123
+[2023-11-09T23:12:13.107] [INFO] file - Server started running at 0.0.0.0:3001
+[2023-11-09T23:12:23.254] [INFO] file - api {"method":"register","body":{"username":"danhpb3"}}
+[2023-11-09T23:12:29.817] [INFO] file - api {"method":"login","body":{"username":"danhpb3"}}

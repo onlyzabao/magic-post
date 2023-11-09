@@ -1,0 +1,36 @@
+{
+    "hostname": "0.0.0.0",
+    "port": 3001,
+    "database": {
+      "url": "mongodb+srv://root:1@magic-post.mditvgs.mongodb.net/?retryWrites=true&w=majority",
+      "options": {
+        "dbName": "magic-post",
+        "useNewUrlParser": true,
+        "useUnifiedTopology": true
+      }
+    },
+    "secret": "29f362409615535d192aa77f4ff6703c29b516ddad8b7d606672475fded14352",
+    "log4js": {
+      "appenders": {
+        "file": {
+          "type": "file",
+          "filename": "logs/application.log",
+          "maxLogSize": 10485760,
+          "backups": 3,
+          "compress": true
+        },
+        "application": {
+          "type": "console"
+        }
+      },
+      "categories": {
+        "default": {
+          "appenders": [
+            "file",
+            "application"
+          ],
+          "level": "info"
+        }
+      }
+    }
+  }
