@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import systemConfig from "config";
 import errorCode from "../constants/error.code";
 import moment from "moment";
-import UserModel from "../models/UserModel";
+import Staff from "../models/staff";
 
 const authorization = (roles, statuses) => async (req, res, next) => {
     const authorization = req.headers.authorization;
@@ -16,7 +16,7 @@ const authorization = (roles, statuses) => async (req, res, next) => {
                 jwt.verify(token, secret, async function (err, payload) {
                     if (payload) {
                         req.payload = payload;
-                        const user = await UserModel.findOne({
+                        const user = await Staff.findOne({
                             username: payload.username
                         });
                         if (roles && roles.length && !roles.includes(payload.role) && !roles.includes("all") && !roles.includes("ALL")) {

@@ -58,6 +58,10 @@ export default {
             errorCode: "USER_EXISTS",
             message: "Account already exists"
         },
+        DEPARTMENT_NOT_EXISTS: {
+            errorCode: "DEPARTMENT_NOT_EXISTS",
+            message: "Department ID is invalid"
+        }
     },
     CHANGE_PASSWORD: {
         USER_NOT_EXISTS: {

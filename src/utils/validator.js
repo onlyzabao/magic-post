@@ -1,14 +1,20 @@
 import Joi from "joi";
+import role from "../constants/staff.role"
 
 class Validator {
     auth_register = (body) => {
-        return Joi.object()
-            .keys({
-                username: Joi.string().required(),
-                password: Joi.string().required()
-            })
-            .validate(body);
-    }
+        const roleValues = Object.values(role);
+        const staffSchema = Joi.object().keys({
+            username: Joi.string().required(),
+            password: Joi.string().required(),
+            role: Joi.string().valid(...roleValues).required(),
+            department: Joi.string(),
+            name: Joi.string().required(),
+            gender: Joi.string().valid("Male", "Female", "Other").required(),
+            email: Joi.string().email().required()
+        });
+        return staffSchema.validate(body);
+    }   
     auth_login = (body) => {
         return Joi.object()
             .keys({

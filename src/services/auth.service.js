@@ -1,5 +1,4 @@
 import Validator from "../utils/validator";
-import UserModel from "../models/UserModel";
 import helper from "../utils/helper";
 import moment from "moment/moment";
 import errorCode from "../constants/error.code";
@@ -7,19 +6,16 @@ import jwt from "jsonwebtoken";
 import systemConfig from "config";
 import ms from "ms";
 import * as _ from "lodash";
-import role from "../constants/role";
 import logger from "../utils/logger";
+import Staff from "../models/staff";
+import Department from "../models/department";
 
 class AuthService {
     constructor() { }
     async login(req, res, next) {
         try {
-            const {
-                body
-            } = req;
-            const {
-                error
-            } = Validator.auth_login(body);
+            const { body } = req;
+            const { error } = Validator.auth_login(body);
             if (error) {
                 return res.status(400).json({
                     ok: false,
@@ -28,7 +24,7 @@ class AuthService {
                 });
             }
 
-            const result = await UserModel.findOne({
+            const result = await Staff.findOne({
                 username: body.username
             });
             let msg;
@@ -38,13 +34,13 @@ class AuthService {
             if (!msg && !helper.comparePassword(body.password, result.password)) {
                 msg = errorCode.LOGIN.PASSWORD_INVALID;
             }
-
             if (msg) {
                 return res.status(400).json({
                     ok: false,
                     ...msg
                 })
             }
+
             const payload = {
                 username: result.username,
                 role: result.role,
@@ -74,12 +70,8 @@ class AuthService {
 
     async register(req, res, next) {
         try {
-            const {
-                body
-            } = req;
-            const {
-                error
-            } = Validator.auth_register(body);
+            const { body } = req;
+            const { error } = Validator.auth_register(body);
             if (error) {
                 return res.status(400).json({
                     ok: false,
@@ -88,7 +80,28 @@ class AuthService {
                 });
             }
 
-            let user = await UserModel.findOne({
+            let userData = {
+                username: body.username,
+                password: helper.generateHash(body.password),
+                role: body.role,
+                name: body.name,
+                gender: body.gender,
+                email: body.email
+            };
+
+            if (body.department) {
+                userData.department = body.department;
+
+                let department = await Department.findById(body.department);
+                if (!department) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.CREATE_USER.DEPARTMENT_NOT_EXISTS
+                    })
+                }
+            }
+
+            let user = await Staff.findOne({
                 username: body.username
             });
             if (user) {
@@ -97,15 +110,10 @@ class AuthService {
                     errorCode: errorCode.REGISTER.USERNAME_EXISTS
                 })
             }
-            const uuid = helper.genUuid();
-            user = await UserModel.create({
-                uuid: uuid,
-                username: body.username,
-                password: helper.generateHash(body.password),
-                role: role.USER
-            });
+
+            user = await Staff.create(userData);
+
             const payload = {
-                uuid: user.uuid,
                 username: user.username,
                 role: user.role,
             }
@@ -119,7 +127,7 @@ class AuthService {
                     token: `Bearer ${token}`,
                     payload: {
                         ...payload,
-                        username: payload.username.slice(0, constant.Username_length)
+                        username: payload.username
                     }
                 }
 

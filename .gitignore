@@ -6,3 +6,6 @@ dist/
 
 # Ignore log files
 logs/
+
+# Ingore vscode config files
+.vscode/
