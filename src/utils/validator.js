@@ -1,9 +1,9 @@
 import Joi from "joi";
-import role from "../constants/staff.role"
+import staffRole from "../constants/staff.role"
 
 class Validator {
     auth_register = (body) => {
-        const roleValues = Object.values(role);
+        const roleValues = Object.values(staffRole);
         const staffSchema = Joi.object().keys({
             username: Joi.string().required(),
             password: Joi.string().required(),
