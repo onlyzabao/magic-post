@@ -17,12 +17,12 @@ npm run start
     - Data:
         ```json
         {
-            // staff id
+            /* staff id */
             "username": "21020751",
             "password": "21020751",
-            // see constants/staff.role.js
+            /* see constants/staff.role.js */
             "role": "STORAGE-MANAGER",
-            // if staff role is BOSS, no need for this field. Otherwise, it's the department id that the staff is working on
+            /* if staff role is BOSS, no need for this field. Otherwise, it's the department id that the staff is working on */
             "department": "654df7b079626d8a284e9a75",  
             "name": "Nguyen Tran Gia Bao",
             "gender": "Male",
