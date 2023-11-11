@@ -9,6 +9,7 @@ import * as _ from "lodash";
 import logger from "../utils/logger";
 import Staff from "../models/staff";
 import Department from "../models/department";
+import staffRole from "../constants/staff.role";
 
 class AuthService {
     constructor() { }
@@ -89,16 +90,15 @@ class AuthService {
                 email: body.email
             };
 
-            if (body.department) {
-                userData.department = body.department;
-
+            if (body.department && body.role !== staffRole.BOSS) {
                 let department = await Department.findById(body.department);
                 if (!department) {
                     return res.status(400).json({
                         ok: false,
-                        errorCode: errorCode.CREATE_USER.DEPARTMENT_NOT_EXISTS
+                        errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
                     })
                 }
+                userData.department = body.department;
             }
 
             let user = await Staff.findOne({
@@ -131,7 +131,7 @@ class AuthService {
                     }
                 }
 
-            })
+            });
         } catch (e) {
             console.log(e);
             return res.status(400).json({

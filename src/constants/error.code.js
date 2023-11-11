@@ -53,16 +53,6 @@ export default {
             message: "Account has just changed the password or has been kicked"
         }
     },
-    CREATE_USER: {
-        USER_EXISTS: {
-            errorCode: "USER_EXISTS",
-            message: "Account already exists"
-        },
-        DEPARTMENT_NOT_EXISTS: {
-            errorCode: "DEPARTMENT_NOT_EXISTS",
-            message: "Department ID is invalid"
-        }
-    },
     CHANGE_PASSWORD: {
         USER_NOT_EXISTS: {
             errorCode: "USER_NOT_EXISTS",
@@ -85,8 +75,19 @@ export default {
             message: "New username already exists"
         }
     },
+
+    DEPARTMENT: {
+        PARAMS_MISSING: {
+            errorCode: "PARAMS_MISSING",
+            message: "Department zipcode or cfs is missing"
+        },
+        DEPARTMENT_NOT_EXISTS: {
+            errorCode: "DEPARTMENT_NOT_EXISTS",
+            message: "Department ID is invalid"
+        }
+    },
+    
     GENERAL_ERROR: "GENERAL_ERROR",
     SUCCESS: "SUCCESS",
     PARAMS_INVALID: "PARAMS_INVALID"
-
 }

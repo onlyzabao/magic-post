@@ -8,13 +8,13 @@ Run:
 npm run start
 ```
 # API
-## Manage Staff Account
+## Manage Staff
 1. Create Staff Account
 
-    For boss to create manager's accounts and manager to create employee's accounts
+    For BOSS to create MANAGER's accounts and for MANAGER to create EMPLOYEE's accounts
     - HTTP Method: POST
-    - Path: /api/v1/auth/register
-    - Data:
+    - Path: /auth/register
+    - Req Data:
         ```json
         {
             // staff id
@@ -32,6 +32,29 @@ npm run start
             "name": "Nguyen Tran Gia Bao",
             "gender": "Male",
             "email": "only.zabao@example.com"
+        }
+
+        ```
+
+## Manage Department
+1. Create Department
+
+    For BOSS to create Department
+    - HTTP Method: POST
+    - Path: department/create
+    - Req Data:
+        ```json
+        {
+            "province": "Ho Chi Minh",
+            "district": "Quan 1",
+            "street": "135 Nguyen Hue",
+
+            // see constants/department.type.js
+            "type": "POSTOFFICE",
+
+            // if department type is STORAGE, no need for these fields below
+            "cfs": "654df7b079626d8a284e9a75", // STORAGE id
+            "zipcode": "70000"
         }
 
         ```

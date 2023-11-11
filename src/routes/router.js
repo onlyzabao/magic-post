@@ -1,7 +1,9 @@
 import { Router } from "express";
-import apiv1 from "./apiv1";
+import authRouter from "./auth.router";
+import departmentRouter from "./department.router";
 import controller from "../controllers/controller";
 
 const router = Router();
-controller(router, apiv1);
+controller(router, authRouter);
+controller(router, departmentRouter);
 export default router;

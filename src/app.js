@@ -28,7 +28,7 @@ app.use(bodyParser.json({
 app.use(bodyParser.raw({
     limit: '25mb'
 }));
-app.use("/api/v1", router);
+app.use("/", router);
 app.get("/status", (request, response) => {
     const status = {
         "Status": "Running"

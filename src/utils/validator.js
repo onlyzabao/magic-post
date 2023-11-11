@@ -1,5 +1,6 @@
 import Joi from "joi";
 import staffRole from "../constants/staff.role"
+import departmentType from "../constants/department.type"
 
 class Validator {
     auth_register = (body) => {
@@ -22,6 +23,18 @@ class Validator {
                 password: Joi.string().required()
             })
             .validate(body);
+    }
+    department_create = (body) => {
+        const typeValues = Object.values(departmentType);
+        const departmentSchema = Joi.object().keys({
+            province: Joi.string().required(),
+            district: Joi.string().required(),
+            street: Joi.string().required(),
+            type: Joi.string().valid(...typeValues).required(),
+            cfs: Joi.string(),
+            zipcode: Joi.string()
+        });
+        return departmentSchema.validate(body);
     }
 }
 export default new Validator();
