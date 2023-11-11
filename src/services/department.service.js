@@ -56,14 +56,10 @@ class DepartmentService {
             const payload = {
                 departmentId: department._id
             }
-            // const token = jwt.sign(payload, systemConfig.get("secret"), {
-            //     expiresIn: ms('1y')
-            // });
             res.status(200).json({
                 ok: true,
                 errorCode: errorCode.SUCCESS,
                 data: {
-                    // token: `Bearer ${token}`,
                     payload: {
                         ...payload
                     }
@@ -136,6 +132,84 @@ class DepartmentService {
 
             const payload = {
                 departmentId: department._id
+            }
+            res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(500).json({
+                ok: false,
+                errorCode: errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+
+    async view_document(req, res, next) {
+        try {
+            const { params } = req;
+
+            const department = await Department.findById(params.id);
+    
+            if (!department) {
+                return res.status(404).json({
+                    ok: false,
+                    errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
+                });
+            }
+            
+            const payload = {
+                department: department
+            }
+            res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(500).json({
+                ok: false,
+                errorCode: errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+
+    async view_collection(req, res, next) {
+        try {
+            const { query } = req;
+            const { error } = validator.department_update(query);
+            if (error) {
+                return res.status(404).json({
+                    ok: false,
+                    errorCode: errorCode.PARAMS_INVALID,
+                    message: error.details.map(x => x.message).join(", ")
+                });
+            }
+
+            const filter = {};
+            if (query.province) filter.province = query.province;
+            if (query.district) filter.district = query.district;
+            if (query.street) filter.street = query.street;
+            if (query.type) filter.type = query.type;
+            if (query.cfs) filter.cfs = query.cfs;
+            if (query.zipcode) filter.zipcode = query.zipcode;
+            if (query.active !== undefined) filter.active = query.active;
+
+            const departments = await Department.find(filter);
+            
+            const payload = {
+                departments: departments                
             }
             res.status(200).json({
                 ok: true,

@@ -19,6 +19,24 @@ export default [{
             roles: [
                 staffRole.BOSS
             ]
+        },
+        {
+            httpMethod: "get",
+            path: "/department",
+            method: "view_collection",
+            roles: [
+                staffRole.BOSS
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/department/:id",
+            method: "view_document",
+            roles: [
+                staffRole.BOSS,
+                staffRole.POSTOFFICE_MANAGER,
+                staffRole.STORAGE_MANAGER
+            ]
         }
     ]
 }];

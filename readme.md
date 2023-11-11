@@ -76,3 +76,14 @@ npm run start
             "active": false
         }
         ```
+3. View one Document
+
+    For BOSS, MANAGER to see data of a Department
+    - HTTP Method: GET
+    - Path: /department/:id
+4. View a Collection of Documents
+
+    For BOSS to see a list of Department with filter
+    - HTTP Method: GET
+    - Path: /department
+     - Req Params: Same as update req data
