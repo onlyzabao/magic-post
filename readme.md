@@ -41,7 +41,7 @@ npm run start
 
     For BOSS to create Department
     - HTTP Method: POST
-    - Path: department/create
+    - Path: /department/create
     - Req Data:
         ```json
         {
@@ -58,3 +58,9 @@ npm run start
         }
 
         ```
+2. Update Department
+
+    For BOSS to update Department
+    - HTTP Method: PUT
+    - Paht: /department/update/:id
+    - Req Data: Fields to update
