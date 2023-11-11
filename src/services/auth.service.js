@@ -93,7 +93,7 @@ class AuthService {
             if (body.department && body.role !== staffRole.BOSS) {
                 let department = await Department.findById(body.department);
                 if (!department) {
-                    return res.status(400).json({
+                    return res.status(404).json({
                         ok: false,
                         errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
                     })

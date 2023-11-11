@@ -36,5 +36,17 @@ class Validator {
         });
         return departmentSchema.validate(body);
     }
+    department_update = (body) => {
+        const typeValues = Object.values(departmentType);
+        const departmentSchema = Joi.object().keys({
+            province: Joi.string(),
+            district: Joi.string(),
+            street: Joi.string(),
+            type: Joi.string().valid(...typeValues),
+            cfs: Joi.string(),
+            zipcode: Joi.string()
+        });
+        return departmentSchema.validate(body);
+    }
 }
 export default new Validator();

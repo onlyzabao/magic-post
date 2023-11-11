@@ -11,6 +11,14 @@ export default [{
             roles: [
                 staffRole.BOSS
             ]
+        },
+        {
+            httpMethod: "put",
+            path: "/department/update/:id",
+            method: "update",
+            roles: [
+                staffRole.BOSS
+            ]
         }
     ]
 }];
