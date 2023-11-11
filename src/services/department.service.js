@@ -22,7 +22,8 @@ class DepartmentService {
                 province: body.province,
                 district: body.district,
                 street: body.street,
-                type: body.type
+                type: body.type,
+                active: true
             }
 
             if (body.type === departmentType.POSTOFFICE) {
@@ -33,11 +34,17 @@ class DepartmentService {
                     })
                 }
 
-                let department = await Department.findById(body.cfs);
-                if (!department) {
+                let cfs = await Department.findById(body.cfs);
+                if (!cfs) {
                     return res.status(404).json({
                         ok: false,
                         errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
+                    })
+                }
+                if (cfs.active === false) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
                     })
                 }
                 departmentData.cfs = body.cfs;
@@ -88,6 +95,7 @@ class DepartmentService {
             if (body.district) updateFields.district = body.district;
             if (body.street) updateFields.street = body.street;
             if (body.type) updateFields.type = body.type;
+            if (body.active !== undefined) updateFields.active = body.active;
             
             const departmentId = params.id;
             let department = await Department.findById(departmentId);
@@ -97,7 +105,7 @@ class DepartmentService {
                     errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
                 });
             }
-            if (department.type === departmentType.POSTOFFICE || updateFields.type === departmentType.POSTOFFICE) {
+            if (department.type !== departmentType.POSTOFFICE && updateFields.type === departmentType.POSTOFFICE) {
                 if (!body.cfs || !body.zipcode) {
                     return res.status(400).json({
                         ok: false,
@@ -105,11 +113,17 @@ class DepartmentService {
                     })
                 }
 
-                let department = await Department.findById(body.cfs);
-                if (!department) {
+                let cfs = await Department.findById(body.cfs);
+                if (!cfs) {
                     return res.status(404).json({
                         ok: false,
                         errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
+                    })
+                }
+                if (cfs.active === false) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
                     })
                 }
                 updateFields.cfs = body.cfs;

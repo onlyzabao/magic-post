@@ -63,4 +63,16 @@ npm run start
     For BOSS to update Department
     - HTTP Method: PUT
     - Paht: /department/update/:id
-    - Req Data: Fields to update
+    - Req Data:
+        ```json
+        {
+            // only provide fields that are need to be updated
+            "province": "Ho Chi Minh",
+            "district": "Quan 1",
+            "street": "135 Nguyen Hue",
+            "type": "POSTOFFICE",
+            "cfs": "654df7b079626d8a284e9a75",
+            "zipcode": "70000",
+            "active": false
+        }
+        ```

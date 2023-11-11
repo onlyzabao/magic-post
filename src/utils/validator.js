@@ -44,7 +44,8 @@ class Validator {
             street: Joi.string(),
             type: Joi.string().valid(...typeValues),
             cfs: Joi.string(),
-            zipcode: Joi.string()
+            zipcode: Joi.string(),
+            active: Joi.boolean()
         });
         return departmentSchema.validate(body);
     }

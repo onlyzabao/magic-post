@@ -84,6 +84,14 @@ export default {
         DEPARTMENT_NOT_EXISTS: {
             errorCode: "DEPARTMENT_NOT_EXISTS",
             message: "Department ID is invalid"
+        },
+        DEPARTMENT_REF_CONSTRAINT: {
+            errorCode: "DEPARTMENT_REF_CONSTRAINT",
+            message: "Can not delete department that is referenced by the others"
+        },
+        DEPARTMENT_NOT_ACTIVE: {
+            errorCode: "DEPARTMENT_NOT_ACTIVE",
+            message: "Department need to be activated first"
         }
     },
     
