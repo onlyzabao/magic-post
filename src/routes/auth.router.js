@@ -12,5 +12,13 @@ export default [{
             path: "/auth/login",
             method: "login"
         },
+        {
+            httpMethod: "put",
+            path: "/auth/password/change",
+            method: "change_password",
+            roles: [
+                "ALL"
+            ]
+        }
     ]
 }];

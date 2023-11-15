@@ -10,13 +10,28 @@ import Staff from "../models/staff";
 import Joi from "joi";
 
 class AuthValidator {
-    login_validate = (body) => {
-        return Joi.object()
-        .keys({
-            username: Joi.string().required(),
-            password: Joi.string().required()
-        })
-        .validate(body);
+    schema_validate = (body, requiredFields = []) => {
+        const schema = {
+            username: Joi.string(),
+            password: Joi.string(),
+            newPassword: Joi.string()
+        };
+
+        requiredFields.forEach(field => {
+            if (schema[field]) {
+                schema[field] = schema[field].required();
+            }
+        });
+
+        const { error } = Joi.object().keys(schema).validate(body);
+        if (error) {
+            return {
+                ok: false,
+                errorCode: errorCode.PARAMS_INVALID,
+                message: error.details.map(x => x.message).join(", ")
+            };
+        }
+        return null;
     }
 }
 
@@ -26,13 +41,9 @@ class AuthService {
         try {
             const { body } = req;
             const validator = new AuthValidator;
-            const { error } = validator.login_validate(body);
-            if (error) {
-                return res.status(400).json({
-                    ok: false,
-                    errorCode: errorCode.PARAMS_INVALID,
-                    message: error.details.map(x => x.message).join(", ")
-                });
+            const schema_error = validator.schema_validate(body, [ "username", "password" ]);
+            if (schema_error) {
+                return res.status(400).json(schema_error);
             }
 
             const result = await Staff.findOne({
@@ -76,6 +87,47 @@ class AuthService {
                 errorCode: errorCode.GENERAL_ERROR,
                 message: e.message
             })
+        }
+    }
+
+    async change_password(req, res, next) {
+        try {
+            const { body } = req;
+            const validator = new AuthValidator;
+
+            const schema_error = validator.schema_validate(body, [ "password", "newPassword" ]);
+            if (schema_error) {
+                return res.status(400).json(schema_error);
+            }
+
+            const self = await Staff.findOne({ username: req.payload.username });
+            if (!self) {
+                return res.status(404).json({
+                    ok: false,
+                    errorCode: errorCode.LOGIN.USER_NOT_FOUND
+                });
+            }
+
+            if (!helper.comparePassword(body.password, self.password)) {
+                return res.status(400).json({
+                    ok: false,
+                    errorCode: errorCode.LOGIN.PASSWORD_INVALID
+                });
+            }
+
+            self.password = helper.generateHash(body.newPassword);
+            self = await self.save();
+
+            res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: errorCode.GENERAL_ERROR,
+                message: e.message
+            });
         }
     }
 }

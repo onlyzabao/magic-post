@@ -22,6 +22,18 @@ npm run start
         ```
     - Res payload: Token
 
+2. Change password
+
+    - HTTP Method: PUT
+    - Path: /auth/password/change
+    - Req body:
+        ```json
+        {
+            "password": "21020751",
+            "newPassword": "21020755"
+        }
+        ```
+
 ## Manage Staff
 1. Create Staff Account
 
