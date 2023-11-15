@@ -18,7 +18,11 @@ const StaffSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Department"
     },
-    name: {
+    firstname: {
+        type: String,
+        required: true
+    },
+    lastname: {
         type: String,
         required: true
     },

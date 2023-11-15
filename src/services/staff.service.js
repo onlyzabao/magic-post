@@ -19,7 +19,8 @@ class StaffValidator {
             password: Joi.string(),
             role: Joi.string().valid(...roleValues),
             department: Joi.string(),
-            name: Joi.string(),
+            firstname: Joi.string(),
+            lastname: Joi.string(),
             gender: Joi.string().valid("Male", "Female", "Other"),
             email: Joi.string().email(),
             active: Joi.boolean()
@@ -92,7 +93,7 @@ class StaffService {
             const { body } = req;
             const validator = new StaffValidator;
             
-            const schema_error = validator.schema_validate(body, [ "username", "password", "role", "name", "gender", "email" ]);
+            const schema_error = validator.schema_validate(body, [ "username", "password", "role", "firstname", "lastname", "gender", "email" ]);
             if (schema_error) {
                 return res.status(400).json(schema_error);
             }
@@ -216,7 +217,7 @@ class StaffService {
             const { query } = req;
 
             const filter = {};
-            const queryFields = ['username', 'role', 'department', 'name', 'gender', 'email', 'active'];
+            const queryFields = ['username', 'role', 'department', 'firstname', 'lastname', 'gender', 'email', 'active'];
             Object.keys(query).forEach(key => {
                 if (queryFields.includes(key)) {
                     filter[key] = query[key];
