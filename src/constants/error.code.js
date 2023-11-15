@@ -17,12 +17,6 @@ export default {
             message: "Incorrect password entered more than 5 times."
         }
     },
-    REGISTER: {
-        USERNAME_EXISTS: {
-            errorCode: "USERNAME_EXISTS",
-            message: "Username already exists"
-        }
-    },
     AUTH: {
         TOKEN_NOT_FOUND: {
             errorCode: "TOKEN_NOT_FOUND",
@@ -83,19 +77,19 @@ export default {
         },
         STAFF_NOT_EXISTS: {
             errorCode: "STAFF_NOT_EXISTS",
-            message: "Staff ID is invalid"
+            message: "Failed to find your request Staff"
         },
-        PERMISSION_DENIED: {
-            errorCode: "PERMISSION_DENIED",
-            message: "You do not have permission to do this action"
+        USERNAME_EXISTS: {
+            errorCode: "USERNAME_EXISTS",
+            message: "Username has already exists"
+        },
+        DEPARTMENT_PARAMS_INVALID: {
+            errorCode: "DEPARTMENT_PARAMS_INVALID",
+            message: "Department must be associated with Role"
         }
     },
 
     DEPARTMENT: {
-        PARAMS_INVALID: {
-            errorCode: "PARAMS_INVALID",
-            message: "Department type is invalid"
-        },
         POSTOFFICE_PARAMS_REQUIRED: {
             errorCode: "PARAMS_MISSING",
             message: "Postoffice Department must have cfs and zipcode"

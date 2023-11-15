@@ -46,31 +46,12 @@ class StaffValidator {
         if (user) {
             return {
                 ok: false,
-                errorCode: errorCode.REGISTER.USERNAME_EXISTS
+                errorCode: errorCode.STAFF.USERNAME_EXISTS
             }
         }
         return null;
     }
-    role_validate(body, payload) {
-        if (payload.role === staffRole.POSTOFFICE_MANAGER) {
-            if (body.role !== staffRole.POSTOFFICE_EMMPLOYEE) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.STAFF.PARAMS_INVALID
-                }
-            }
-        }
-        if (payload.role === staffRole.STORAGE_MANAGER) {
-            if (body.role !== staffRole.STORAGE_EMMPLOYEE) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.STAFF.PARAMS_INVALID
-                }
-            }
-        }
-        return null;
-    }
-    async department_validate(body, payload) {
+    async department_validate(body) {
         let department = await Department.findById(body.department);
         if (!department) {
             return {
@@ -78,20 +59,11 @@ class StaffValidator {
                 errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
             }
         }
-        if (payload.role !== staffRole.BOSS) {
-            let manager = await Staff.findOne({ username: payload.username });
-            if (manager.department !== department._id) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.STAFF.PERMISSION_DENIED
-                }
-            }
-        }
         if (department.type === departmentType.STORAGE) {
             if (!(body.role === staffRole.STORAGE_EMMPLOYEE || body.role === staffRole.STORAGE_MANAGER)) {
                 return {
                     ok: false,
-                    errorCode: errorCode.DEPARTMENT.PARAMS_INVALID
+                    errorCode: errorCode.STAFF.DEPARTMENT_PARAMS_INVALID
                 }
             }
         }
@@ -99,7 +71,7 @@ class StaffValidator {
             if (!(body.role === staffRole.POSTOFFICE_EMMPLOYEE || body.role === staffRole.POSTOFFICE_MANAGER)) {
                 return {
                     ok: false,
-                    errorCode: errorCode.DEPARTMENT.PARAMS_INVALID
+                    errorCode: errorCode.STAFF.DEPARTMENT_PARAMS_INVALID
                 }
             }
         }
@@ -119,30 +91,39 @@ class StaffService {
         try {
             const { body } = req;
             const validator = new StaffValidator;
-
-            const schema_error = validator.schema_validate(body, [
-                "username",
-                "password",
-                "role",
-                "name",
-                "gender",
-                "email"
-            ]);
+            
+            const schema_error = validator.schema_validate(body, [ "username", "password", "role", "name", "gender", "email" ]);
             if (schema_error) {
                 return res.status(400).json(schema_error);
+            }
+            
+            if (req.payload.role !== staffRole.BOSS) {
+                let manager = await Staff.findOne({ username: req.payload.username });
+                if (!manager) {
+                    return res.status(404).json({
+                        ok: false,
+                        errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
+                    });
+                }
+                if (manager.department.toString() !== body.department) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.AUTH.ROLE_INVALID
+                    });
+                }
+                if (body.role === staffRole.BOSS || body.role === staffRole.STORAGE_MANAGER || body.role === staffRole.POSTOFFICE_MANAGER) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.AUTH.ROLE_INVALID
+                    });
+                }
             }
 
             const username_error = await validator.username_validate(body);
             if (username_error) {
                 return res.status(400).join(username_error);
             }
-
-            const role_error = validator.role_validate(body, req.payload);
-            if (role_error) {
-                return res.status(400).join(role_error);
-            }
-
-            const department_error = await validator.department_validate(body, req.payload);
+            const department_error = await validator.department_validate(body);
             if (department_error) {
                 return res.status(400).join(department_error);
             }
@@ -184,12 +165,29 @@ class StaffService {
         try {
             const { params } = req;
 
-            const staff = await Staff.findOne({ username: params.id });
+            let staff = await Staff.findOne({ username: params.id });
             if (!staff) {
                 return res.status(404).json({
                     ok: false,
                     errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
                 });
+            }
+            delete staff._doc.password;
+
+            if (req.payload.role !== staffRole.BOSS) {
+                let manager = await Staff.findOne({ username: req.payload.username });
+                if (!manager) {
+                    return res.status(404).json({
+                        ok: false,
+                        errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
+                    });
+                }
+                if (staff.department !== undefined && manager.department.toString() !== staff.department.toString()) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.AUTH.ROLE_INVALID
+                    });
+                }
             }
 
             const payload = {
@@ -217,12 +215,6 @@ class StaffService {
         try {
             const { query } = req;
 
-            const validator = new StaffValidator;
-            const schema_error = validator.schema_validate(query);
-            if (schema_error) {
-                return res.status(400).json(schema_error);
-            }
-
             const filter = {};
             const queryFields = ['username', 'role', 'department', 'name', 'gender', 'email', 'active'];
             Object.keys(query).forEach(key => {
@@ -231,11 +223,25 @@ class StaffService {
                 }
             });
 
+            if (req.payload.role !== staffRole.BOSS) {
+                let manager = await Staff.findOne({ username: req.payload.username });
+                if (!manager) {
+                    return res.status(404).json({
+                        ok: false,
+                        errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
+                    });
+                }
+                filter.department = manager.department;
+            }
+
             const page = parseInt(query.page) || 1;
             const limit = parseInt(query.limit) || 10;
             const skip = (page - 1) * limit;
 
-            const staffs = await Staff.find(filter).skip(skip).limit(limit);
+            let staffs = await Staff.find(filter).skip(skip).limit(limit);
+            staffs.forEach(staff => {
+                delete staff._doc.password;
+            });
 
             const payload = {
                 staffs: staffs
@@ -270,13 +276,33 @@ class StaffService {
                 });
             }
 
-            const validator = new StaffValidator;
+            if (req.payload.role !== staffRole.BOSS) {
+                let manager = await Staff.findOne({ username: req.payload.username });
+                if (!manager) {
+                    return res.status(404).json({
+                        ok: false,
+                        errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
+                    });
+                }
+                if (manager.department.toString() !== staff.department.toString()) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.AUTH.ROLE_INVALID
+                    });
+                }
+                if (body.role === staffRole.BOSS || body.role === staffRole.STORAGE_MANAGER || body.role === staffRole.POSTOFFICE_MANAGER) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.AUTH.ROLE_INVALID
+                    });
+                }
+            }
 
+            const validator = new StaffValidator;
             const schema_error = validator.schema_validate(body);
             if (schema_error) {
                 return res.status(400).json(schema_error);
             }
-            
             if (body.username) {
                 const username_error = await validator.username_validate(body);
                 if (username_error) {
@@ -287,11 +313,7 @@ class StaffService {
                 body.password = helper.generateHash(body.password);
             }
             if (body.role || body.department) {
-                const role_error = validator.role_validate(body, req.payload);
-                if (role_error) {
-                    return res.status(400).join(role_error);
-                }
-                const department_error = await validator.department_validate(body, req.payload);
+                const department_error = await validator.department_validate(body);
                 if (department_error) {
                     return res.status(400).join(department_error);
                 }

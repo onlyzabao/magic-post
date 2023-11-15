@@ -4,9 +4,7 @@
     "database": {
       "url": "mongodb+srv://root:1@magic-post.mditvgs.mongodb.net/?retryWrites=true&w=majority",
       "options": {
-        "dbName": "magic-post",
-        "useNewUrlParser": true,
-        "useUnifiedTopology": true
+        "dbName": "magic-post"
       }
     },
     "secret": "29f362409615535d192aa77f4ff6703c29b516ddad8b7d606672475fded14352",
