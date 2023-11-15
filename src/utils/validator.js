@@ -25,6 +25,20 @@ class Validator {
         });
         return staffSchema.validate(body);
     }
+    staff_update = (body) => {
+        const roleValues = Object.values(staffRole);
+        const staffSchema = Joi.object().keys({
+            username: Joi.string(),
+            password: Joi.string(),
+            role: Joi.string().valid(...roleValues),
+            department: Joi.string(),
+            name: Joi.string(),
+            gender: Joi.string().valid("Male", "Female", "Other"),
+            email: Joi.string().email(),
+            active: Joi.boolean()
+        });
+        return staffSchema.validate(body);
+    }
 
     department_create = (body) => {
         const typeValues = Object.values(departmentType);

@@ -80,7 +80,11 @@ export default {
         PARAMS_INVALID: {
             errorCode: "PARAMS_INVALID",
             message: "Staff role is invalid"
-        }
+        },
+        STAFF_NOT_EXISTS: {
+            errorCode: "STAFF_NOT_EXISTS",
+            message: "Staff ID is invalid"
+        },
     },
 
     DEPARTMENT: {

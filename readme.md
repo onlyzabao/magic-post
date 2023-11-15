@@ -49,6 +49,18 @@ npm run start
         }
 
         ```
+2. View one Staff
+
+    To see data of a Staff
+    - HTTP Method: GET
+    - Path: /staff/:id
+
+3. View a list of Staffs
+
+    To see a list of Staffs
+    - HTTP Method: GET
+    - Path: /staff
+    - Req Params: Same as update req data, page, limit
 
 ## Manage Department
 1. Create Department
@@ -90,14 +102,15 @@ npm run start
             "active": false
         }
         ```
-3. View one Document
+3. View one Department
 
     For BOSS, MANAGER to see data of a Department
     - HTTP Method: GET
     - Path: /department/:id
-4. View a Collection of Documents
+
+4. View a list of Departments
 
     For BOSS to see a list of Department with filter
     - HTTP Method: GET
     - Path: /department
-     - Req Params: Same as update req data
+    - Req Params: Same as update req data, page, limit

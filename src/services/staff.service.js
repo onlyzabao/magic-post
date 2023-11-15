@@ -138,6 +138,88 @@ class StaffService {
             })
         }
     }
+
+    async view_document(req, res, next) {
+        try {
+            const { params } = req;
+
+            const staff = await Staff.findOne({ username: params.id });
+            if (!staff) {
+                return res.status(404).json({
+                    ok: false,
+                    errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
+                });
+            }
+            
+            // Return response
+            const payload = {
+                staff: staff
+            }
+            res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(500).json({
+                ok: false,
+                errorCode: errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+
+    async view_collection(req, res, next) {
+        try {
+            const { query } = req;
+            const { error } = Validator.staff_update(query);
+            if (error) {
+                return res.status(404).json({
+                    ok: false,
+                    errorCode: errorCode.PARAMS_INVALID,
+                    message: error.details.map(x => x.message).join(", ")
+                });
+            }
+
+            const filter = {};
+            if (query.username) filter.username = query.username;
+            if (query.role) filter.role = query.role;
+            if (query.department) filter.department = query.department;
+            if (query.name) filter.name = query.name;
+            if (query.gender) filter.gender = query.gender;
+            if (query.email) filter.email = query.email;
+            if (query.active !== undefined) filter.active = query.active;
+
+            const page = parseInt(query.page) || 1;
+            const limit = parseInt(query.limit) || 10;
+            const skip = (page - 1) * limit;
+
+            const staffs = await Staff.find(filter).skip(skip).limit(limit);
+            
+            const payload = {
+                staffs: staffs           
+            }
+            res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(500).json({
+                ok: false,
+                errorCode: errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
 }
 
 export default new StaffService();
