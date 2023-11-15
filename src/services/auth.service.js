@@ -1,4 +1,3 @@
-import Validator from "../utils/validator";
 import helper from "../utils/helper";
 import moment from "moment/moment";
 import errorCode from "../constants/error.code";
@@ -8,15 +7,26 @@ import ms from "ms";
 import * as _ from "lodash";
 import logger from "../utils/logger";
 import Staff from "../models/staff";
-import Department from "../models/department";
-import staffRole from "../constants/staff.role";
+import Joi from "joi";
+
+class AuthValidator {
+    login_validate = (body) => {
+        return Joi.object()
+        .keys({
+            username: Joi.string().required(),
+            password: Joi.string().required()
+        })
+        .validate(body);
+    }
+}
 
 class AuthService {
     constructor() { }
     async login(req, res, next) {
         try {
             const { body } = req;
-            const { error } = Validator.auth_login(body);
+            const validator = new AuthValidator;
+            const { error } = validator.login_validate(body);
             if (error) {
                 return res.status(400).json({
                     ok: false,
