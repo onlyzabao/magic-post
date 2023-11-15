@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import authorization from "./../middlewares/auth";
+import authorization from "../middlewares/authorization";
 import logger from "./../utils/logger";
 
 export default function (router, apis) {

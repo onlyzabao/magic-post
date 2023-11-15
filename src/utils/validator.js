@@ -3,7 +3,16 @@ import staffRole from "../constants/staff.role"
 import departmentType from "../constants/department.type"
 
 class Validator {
-    auth_register = (body) => {
+    auth_login = (body) => {
+        return Joi.object()
+        .keys({
+            username: Joi.string().required(),
+            password: Joi.string().required()
+        })
+        .validate(body);
+    }
+
+    staff_create = (body) => {
         const roleValues = Object.values(staffRole);
         const staffSchema = Joi.object().keys({
             username: Joi.string().required(),
@@ -15,15 +24,8 @@ class Validator {
             email: Joi.string().email().required()
         });
         return staffSchema.validate(body);
-    }   
-    auth_login = (body) => {
-        return Joi.object()
-            .keys({
-                username: Joi.string().required(),
-                password: Joi.string().required()
-            })
-            .validate(body);
     }
+
     department_create = (body) => {
         const typeValues = Object.values(departmentType);
         const departmentSchema = Joi.object().keys({

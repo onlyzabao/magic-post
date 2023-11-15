@@ -9,16 +9,6 @@ export default [{
     methods: [
         {
             httpMethod: "post",
-            path: "/auth/register",
-            method: "register",
-            roles: [
-                staffRole.BOSS,
-                staffRole.STORAGE_MANAGER,
-                staffRole.POSTOFFICE_MANAGER
-            ]
-        },
-        {
-            httpMethod: "post",
             path: "/auth/login",
             method: "login"
         },

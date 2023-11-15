@@ -8,12 +8,26 @@ Run:
 npm run start
 ```
 # API
+## Authentication
+1. Login
+
+    - HTTP Method: POST
+    - Path: /auth/login
+    - Req body:
+        ```json
+        {
+            "username": "21020751",
+            "password": "21020751"
+        }
+        ```
+    - Res payload: Token
+
 ## Manage Staff
 1. Create Staff Account
 
     For BOSS to create MANAGER's accounts and for MANAGER to create EMPLOYEE's accounts
     - HTTP Method: POST
-    - Path: /auth/register
+    - Path: /staff/create
     - Req Data:
         ```json
         {
