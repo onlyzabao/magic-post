@@ -30,6 +30,10 @@ const StaffSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
+    },
+    active: {
+        type: Boolean,
+        required: true
     }
 });
 

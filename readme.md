@@ -62,6 +62,26 @@ npm run start
     - Path: /staff
     - Req Params: Same as update req data, page, limit
 
+4. Update Staff
+
+    For BOSS, MANAGER to update Staff
+    - HTTP Method: PUT
+    - Paht: /staff/update/:id
+    - Req Data:
+        ```json
+        {
+            // only provide fields that are need to be updated
+            "username": "21020751",
+            "password": "21020751",
+            "role": "STORAGE-MANAGER",
+            "department": "654df7b079626d8a284e9a75",  
+            "name": "Nguyen Tran Gia Bao",
+            "gender": "Male",
+            "email": "only.zabao@example.com",
+            "active": false
+        }
+        ```
+
 ## Manage Department
 1. Create Department
 

@@ -36,5 +36,15 @@ export default [{
                 staffRole.POSTOFFICE_MANAGER
             ]
         },
+        {
+            httpMethod: "put",
+            path: "/staff/update/:id",
+            method: "update",
+            roles: [
+                staffRole.BOSS,
+                staffRole.STORAGE_MANAGER,
+                staffRole.POSTOFFICE_MANAGER
+            ]
+        }
     ]
 }];

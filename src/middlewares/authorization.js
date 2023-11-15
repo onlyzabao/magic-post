@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import systemConfig from "config";
 import errorCode from "../constants/error.code";
-import moment from "moment";
 import Staff from "../models/staff";
 
 const authorization = (roles, statuses) => async (req, res, next) => {

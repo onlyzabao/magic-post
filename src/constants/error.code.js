@@ -85,6 +85,10 @@ export default {
             errorCode: "STAFF_NOT_EXISTS",
             message: "Staff ID is invalid"
         },
+        PERMISSION_DENIED: {
+            errorCode: "PERMISSION_DENIED",
+            message: "You do not have permission to do this action"
+        }
     },
 
     DEPARTMENT: {
