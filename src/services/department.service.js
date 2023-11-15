@@ -39,10 +39,9 @@ class DepartmentValidator {
             if (!body.cfs || !body.zipcode) {
                 return {
                     ok: false,
-                    errorCode: errorCode.DEPARTMENT.PARAMS_MISSING
+                    errorCode: errorCode.DEPARTMENT.POSTOFFICE_PARAMS_REQUIRED
                 }
             }
-
             let cfs = await Department.findById(body.cfs);
             if (!cfs) {
                 return {
@@ -54,6 +53,14 @@ class DepartmentValidator {
                 return {
                     ok: false,
                     errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
+                }
+            }
+        }
+        if (body.type === departmentType.STORAGE) {
+            if (body.cfs || body.zipcode) {
+                return {
+                    ok: false,
+                    errorCode: errorCode.DEPARTMENT.STORAGE_PARAMS_UNREQUIRED
                 }
             }
         }
@@ -131,6 +138,10 @@ class DepartmentService {
                 if (type_error) {
                     return res.status(400).json(type_error);
                 }
+                if (body.type === departmentType.STORAGE) {
+                    body.cfs = undefined;
+                    body.zipcode = undefined;
+                }
             }
 
             Object.assign(department, body);
@@ -195,12 +206,6 @@ class DepartmentService {
     async view_collection(req, res, next) {
         try {
             const { query } = req;
-            const validator = new DepartmentValidator;
-
-            const schema_error = validator.schema_validate(query);
-            if (schema_error) {
-                return res.status(400).json(schema_error);
-            }
 
             const filter = {};
             const queryFields = ['province', 'district', 'street', 'type', 'cfs', 'zipcode', 'active'];

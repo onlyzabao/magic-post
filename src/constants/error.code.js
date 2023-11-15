@@ -96,13 +96,17 @@ export default {
             errorCode: "PARAMS_INVALID",
             message: "Department type is invalid"
         },
-        PARAMS_MISSING: {
+        POSTOFFICE_PARAMS_REQUIRED: {
             errorCode: "PARAMS_MISSING",
-            message: "Department zipcode or cfs is missing"
+            message: "Postoffice Department must have cfs and zipcode"
+        },
+        STORAGE_PARAMS_UNREQUIRED: {
+            errorCode: "PARAMS_MISSING",
+            message: "Storage Department must not have cfs and zipcode"
         },
         DEPARTMENT_NOT_EXISTS: {
             errorCode: "DEPARTMENT_NOT_EXISTS",
-            message: "Department ID is invalid"
+            message: "Failed to find your request Department"
         },
         DEPARTMENT_REF_CONSTRAINT: {
             errorCode: "DEPARTMENT_REF_CONSTRAINT",
@@ -110,7 +114,7 @@ export default {
         },
         DEPARTMENT_NOT_ACTIVE: {
             errorCode: "DEPARTMENT_NOT_ACTIVE",
-            message: "Department need to be activated first"
+            message: "Failed to take action on deactivated Department"
         }
     },
     
