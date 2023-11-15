@@ -8,12 +8,15 @@ import * as _ from "lodash";
 import Staff from "../models/staff";
 import Department from "../models/department";
 import staffRole from "../constants/staff.role";
+import departmentType from "../constants/department.type";
 
 class StaffService {
     constructor() { }
     async create(req, res, next) {
         try {
             const { body } = req;
+
+            // Validating fields type
             const { error } = Validator.staff_create(body);
             if (error) {
                 return res.status(400).json({
@@ -24,14 +27,40 @@ class StaffService {
             }
 
             let userData = {
-                username: body.username,
                 password: helper.generateHash(body.password),
-                role: body.role,
                 name: body.name,
                 gender: body.gender,
                 email: body.email
             };
 
+            // Validating role data
+            if (req.payload.role === staffRole.BOSS) {
+                if (body.role !== staffRole.POSTOFFICE_MANAGER && body.role !== staffRole.STORAGE_MANAGER) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.STAFF.PARAMS_INVALID
+                    })
+                }
+            }
+            if (req.payload.role === staffRole.POSTOFFICE_MANAGER) {
+                if (body.role !== staffRole.POSTOFFICE_EMMPLOYEE) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.STAFF.PARAMS_INVALID
+                    })
+                }
+            }
+            if (req.payload.role === staffRole.STORAGE_MANAGER) {
+                if (body.role !== staffRole.STORAGE_EMMPLOYEE) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.STAFF.PARAMS_INVALID
+                    })
+                }
+            }
+            userData.role = body.role;
+
+            // Validating department data
             if (body.department && body.role !== staffRole.BOSS) {
                 let department = await Department.findById(body.department);
                 if (!department) {
@@ -40,9 +69,32 @@ class StaffService {
                         errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
                     })
                 }
+                if (department.type === departmentType.STORAGE) {
+                    if (!(body.role === staffRole.STORAGE_EMMPLOYEE || body.role === staffRole.STORAGE_MANAGER)) {
+                        return res.status(400).json({
+                            ok: false,
+                            errorCode: errorCode.DEPARTMENT.PARAMS_INVALID
+                        })
+                    }
+                }
+                if (department.type === departmentType.POSTOFFICE) {
+                    if (!(body.role === staffRole.POSTOFFICE_EMMPLOYEE || body.role === staffRole.POSTOFFICE_MANAGER)) {
+                        return res.status(400).json({
+                            ok: false,
+                            errorCode: errorCode.DEPARTMENT.PARAMS_INVALID
+                        })
+                    }
+                }
+                if (department.active === false) {
+                    return res.status(400).json({
+                        ok: false,
+                        errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
+                    })
+                }
                 userData.department = body.department;
             }
 
+            // Validating username data
             let user = await Staff.findOne({
                 username: body.username
             });
@@ -52,9 +104,12 @@ class StaffService {
                     errorCode: errorCode.REGISTER.USERNAME_EXISTS
                 })
             }
+            userData.username = body.username;
 
+            // Create staff
             user = await Staff.create(userData);
 
+            // Return response
             const payload = {
                 username: user.username,
                 role: user.role,

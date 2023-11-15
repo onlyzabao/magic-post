@@ -76,7 +76,18 @@ export default {
         }
     },
 
+    STAFF: {
+        PARAMS_INVALID: {
+            errorCode: "PARAMS_INVALID",
+            message: "Staff role is invalid"
+        }
+    },
+
     DEPARTMENT: {
+        PARAMS_INVALID: {
+            errorCode: "PARAMS_INVALID",
+            message: "Department type is invalid"
+        },
         PARAMS_MISSING: {
             errorCode: "PARAMS_MISSING",
             message: "Department zipcode or cfs is missing"
