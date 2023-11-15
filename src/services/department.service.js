@@ -1,57 +1,91 @@
 import errorCode from "../constants/error.code";
-import validator from "../utils/validator";
 import Department from "../models/department";
 import departmentType from "../constants/department.type";
 import logger from "../utils/logger";
+import Joi from "joi";
+
+class DepartmentValidator {
+    constructor() { }
+    schema_validate(body, requiredFields = []) {
+        const typeValues = Object.values(departmentType);
+        const schema = {
+            province: Joi.string(),
+            district: Joi.string(),
+            street: Joi.string(),
+            type: Joi.string().valid(...typeValues),
+            cfs: Joi.string(),
+            zipcode: Joi.string(),
+            active: Joi.boolean()
+        };
+
+        requiredFields.forEach(field => {
+            if (schema[field]) {
+                schema[field] = schema[field].required();
+            }
+        });
+
+        const { error } = Joi.object().keys(schema).validate(body);
+        if (error) {
+            return {
+                ok: false,
+                errorCode: errorCode.PARAMS_INVALID,
+                message: error.details.map(x => x.message).join(", ")
+            };
+        }
+        return null;
+    }
+    async type_validate(body) {
+        if (body.type === departmentType.POSTOFFICE) {
+            if (!body.cfs || !body.zipcode) {
+                return {
+                    ok: false,
+                    errorCode: errorCode.DEPARTMENT.PARAMS_MISSING
+                }
+            }
+
+            let cfs = await Department.findById(body.cfs);
+            if (!cfs) {
+                return {
+                    ok: false,
+                    errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
+                }
+            }
+            if (cfs.active === false) {
+                return {
+                    ok: false,
+                    errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
+                }
+            }
+        }
+        return null
+    }
+}
 
 class DepartmentService {
     constructor() { }
     async create(req, res, next) {
         try {
             const { body } = req;
-            const { error } = validator.department_create(body);
-            if (error) {
-                return res.status(400).json({
-                    ok: false,
-                    errorCode: errorCode.PARAMS_INVALID,
-                    message: error.details.map(x => x.message).join(", ")
-                });
+            const validator = new DepartmentValidator;
+
+            const schema_error = validator.schema_validate(body, [
+                "province",
+                "district",
+                "street",
+                "type"
+            ]);
+            if (schema_error) {
+                return res.status(400).json(schema_error);
             }
 
-            let departmentData = {
-                province: body.province,
-                district: body.district,
-                street: body.street,
-                type: body.type,
-                active: true
+            const type_error = await validator.type_validate(body);
+            if (type_error) {
+                return res.status(400).json(type_error);
             }
 
-            if (body.type === departmentType.POSTOFFICE) {
-                if (!body.cfs || !body.zipcode) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.DEPARTMENT.PARAMS_MISSING
-                    })
-                }
+            body.active = true;
 
-                let cfs = await Department.findById(body.cfs);
-                if (!cfs) {
-                    return res.status(404).json({
-                        ok: false,
-                        errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
-                    })
-                }
-                if (cfs.active === false) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
-                    })
-                }
-                departmentData.cfs = body.cfs;
-                departmentData.zipcode = body.zipcode;
-            }
-
-            let department = await Department.create(departmentData);
+            let department = await Department.create(body);
 
             const payload = {
                 departmentId: department._id
@@ -77,56 +111,29 @@ class DepartmentService {
     async update(req, res, next) {
         try {
             const { body, params } = req;
-            const { error } = validator.department_update(body);
-            if (error) {
-                return res.status(404).json({
-                    ok: false,
-                    errorCode: errorCode.PARAMS_INVALID,
-                    message: error.details.map(x => x.message).join(", ")
-                });
+            const validator = new DepartmentValidator;
+
+            const schema_error = validator.schema_validate(body);
+            if (schema_error) {
+                return res.status(400).json(schema_error);
             }
-            
-            const updateFields = {};
-            if (body.province) updateFields.province = body.province;
-            if (body.district) updateFields.district = body.district;
-            if (body.street) updateFields.street = body.street;
-            if (body.type) updateFields.type = body.type;
-            if (body.active !== undefined) updateFields.active = body.active;
-            
-            const departmentId = params.id;
-            let department = await Department.findById(departmentId);
+        
+            let department = await Department.findById(params.id);
             if (!department) {
                 return res.status(404).json({
                     ok: false,
                     errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
                 });
             }
-            if (department.type !== departmentType.POSTOFFICE && updateFields.type === departmentType.POSTOFFICE) {
-                if (!body.cfs || !body.zipcode) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.DEPARTMENT.PARAMS_MISSING
-                    })
+            
+            if (body.type) {
+                const type_error = await validator.type_validate(body);
+                if (type_error) {
+                    return res.status(400).json(type_error);
                 }
-
-                let cfs = await Department.findById(body.cfs);
-                if (!cfs) {
-                    return res.status(404).json({
-                        ok: false,
-                        errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
-                    })
-                }
-                if (cfs.active === false) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
-                    })
-                }
-                updateFields.cfs = body.cfs;
-                updateFields.zipcode = body.zipcode;
             }
 
-            Object.assign(department, updateFields);
+            Object.assign(department, body);
 
             department = await department.save();
 
@@ -188,23 +195,20 @@ class DepartmentService {
     async view_collection(req, res, next) {
         try {
             const { query } = req;
-            const { error } = validator.department_update(query);
-            if (error) {
-                return res.status(404).json({
-                    ok: false,
-                    errorCode: errorCode.PARAMS_INVALID,
-                    message: error.details.map(x => x.message).join(", ")
-                });
+            const validator = new DepartmentValidator;
+
+            const schema_error = validator.schema_validate(query);
+            if (schema_error) {
+                return res.status(400).json(schema_error);
             }
 
             const filter = {};
-            if (query.province) filter.province = query.province;
-            if (query.district) filter.district = query.district;
-            if (query.street) filter.street = query.street;
-            if (query.type) filter.type = query.type;
-            if (query.cfs) filter.cfs = query.cfs;
-            if (query.zipcode) filter.zipcode = query.zipcode;
-            if (query.active !== undefined) filter.active = query.active;
+            const queryFields = ['province', 'district', 'street', 'type', 'cfs', 'zipcode', 'active'];
+            Object.keys(query).forEach(key => {
+                if (queryFields.includes(key)) {
+                    filter[key] = query[key];
+                }
+            });
 
             const page = parseInt(query.page) || 1;
             const limit = parseInt(query.limit) || 10;
