@@ -93,7 +93,7 @@ class StaffService {
             const { body } = req;
             const validator = new StaffValidator;
             
-            const schema_error = validator.schema_validate(body, [ "username", "password", "role", "firstname", "lastname", "gender", "email" ]);
+            const schema_error = validator.schema_validate(body, [ "role", "firstname", "lastname", "gender", "email" ]);
             if (schema_error) {
                 return res.status(400).json(schema_error);
             }
@@ -120,15 +120,12 @@ class StaffService {
                 }
             }
 
-            const username_error = await validator.username_validate(body);
-            if (username_error) {
-                return res.status(400).join(username_error);
-            }
             const department_error = await validator.department_validate(body);
             if (department_error) {
                 return res.status(400).join(department_error);
             }
 
+            body.username = helper.generateID(body.firstname, body.lastname);
             body.password = helper.generateHash(body.username);
             body.active = true;
             const user = await Staff.create(body);

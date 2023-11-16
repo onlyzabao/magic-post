@@ -13,6 +13,17 @@ let comparePassword = function (password, passwordHash) {
 let generateHash = function (password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(12), null)
 }
+let generateID = function (firstname, lastname) {
+    const firstTwoCharsFirstName = firstname.replace(/\s/g, '').slice(0, 2).toUpperCase();
+    const firstTwoCharsLastName = lastname.replace(/\s/g, '').slice(0, 2).toUpperCase();
+
+    const timestamp = Date.now();
+    const shortenedTimestamp = timestamp.toString().slice(-4);
+
+    const id = `${firstTwoCharsFirstName}${firstTwoCharsLastName}${shortenedTimestamp}`;
+
+    return id;
+}
 let toMd5 = function (str) {
     return md5(str)
 }
@@ -26,6 +37,7 @@ let randomString = function (length) {
 
 export default {
     generateHash: generateHash,
+    generateID: generateID,
     comparePassword: comparePassword,
     genUuid: genUuid,
     toMd5: toMd5,

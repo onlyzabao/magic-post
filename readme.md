@@ -42,12 +42,7 @@ npm run start
     - Path: /staff/create
     - Req Data:
         ```json
-        {
-            // staff id
-            "username": "21020751",
-            
-            "password": "21020751",
-            
+        { 
             //see constants/staff.role.js
             "role": "STORAGE-MANAGER",
             
