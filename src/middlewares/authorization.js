@@ -25,7 +25,7 @@ const authorization = (roles, statuses) => async (req, res, next) => {
                             });
                         }
                         req.user = user;
-                        if (!user) {
+                        if (!user || !user.active) {
                             return res.status(403).json({
                                 ok: false,
                                 ...errorCode.AUTH.USER_DELETED,

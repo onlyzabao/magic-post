@@ -98,7 +98,7 @@ class StaffService {
                 return res.status(400).json(schema_error);
             }
             
-            if (req.payload.role !== staffRole.BOSS) {
+            if (staffRole.isManager(req.payload.role)) {
                 let manager = await Staff.findOne({ username: req.payload.username });
                 if (!manager) {
                     return res.status(404).json({
@@ -129,7 +129,7 @@ class StaffService {
                 return res.status(400).join(department_error);
             }
 
-            body.password = helper.generateHash(body.password);
+            body.password = helper.generateHash(body.username);
             body.active = true;
             const user = await Staff.create(body);
 
@@ -175,22 +175,6 @@ class StaffService {
             }
             delete staff._doc.password;
 
-            if (req.payload.role !== staffRole.BOSS) {
-                let manager = await Staff.findOne({ username: req.payload.username });
-                if (!manager) {
-                    return res.status(404).json({
-                        ok: false,
-                        errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
-                    });
-                }
-                if (staff.department !== undefined && manager.department.toString() !== staff.department.toString()) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.AUTH.ROLE_INVALID
-                    });
-                }
-            }
-
             const payload = {
                 staff: staff
             }
@@ -223,17 +207,6 @@ class StaffService {
                     filter[key] = query[key];
                 }
             });
-
-            if (req.payload.role !== staffRole.BOSS) {
-                let manager = await Staff.findOne({ username: req.payload.username });
-                if (!manager) {
-                    return res.status(404).json({
-                        ok: false,
-                        errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
-                    });
-                }
-                filter.department = manager.department;
-            }
 
             const page = parseInt(query.page) || 1;
             const limit = parseInt(query.limit) || 10;
@@ -277,7 +250,7 @@ class StaffService {
                 });
             }
 
-            if (req.payload.role !== staffRole.BOSS) {
+            if (staffRole.isManager(req.payload.role)) {
                 let manager = await Staff.findOne({ username: req.payload.username });
                 if (!manager) {
                     return res.status(404).json({

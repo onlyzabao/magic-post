@@ -25,7 +25,7 @@ export default [{
             path: "/department",
             method: "view_collection",
             roles: [
-                staffRole.BOSS
+                "ALL"
             ]
         },
         {
@@ -33,9 +33,7 @@ export default [{
             path: "/department/:id",
             method: "view_document",
             roles: [
-                staffRole.BOSS,
-                staffRole.POSTOFFICE_MANAGER,
-                staffRole.STORAGE_MANAGER
+                "ALL"
             ]
         }
     ]
