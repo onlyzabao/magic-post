@@ -8,7 +8,7 @@ class DepartmentValidator {
     constructor() { }
     schema_validate(body, requiredFields = []) {
         const typeValues = Object.values(departmentType);
-        const schema = {
+        let schema = Joi.object({
             province: Joi.string(),
             district: Joi.string(),
             street: Joi.string(),
@@ -16,15 +16,10 @@ class DepartmentValidator {
             cfs: Joi.string(),
             zipcode: Joi.string(),
             active: Joi.boolean()
-        };
-
-        requiredFields.forEach(field => {
-            if (schema[field]) {
-                schema[field] = schema[field].required();
-            }
         });
+        schema = schema.fork(requiredFields, (field) => field.required());
 
-        const { error } = Joi.object().keys(schema).validate(body);
+        const { error } = schema.validate(body);
         if (error) {
             return {
                 ok: false,

@@ -6,35 +6,36 @@ import Joi from "joi";
 
 class ShipmentValidator {
     constructor() { }
-    schema_validate(body) {
+    schema_validate(body, requiredFields = []) {
         const statusValues = Object.values(shipStatus);
         const typeValues = Object.values(shipmentType);
-        const schema = Joi.object({
+        let schema = Joi.object({
             sender: Joi.object({
-                name: Joi.string().required(),
-                phone: Joi.string().required(),
-                province: Joi.string().required(),
-                district: Joi.string().required(),
-                street: Joi.string().required(),
-                zipcode: Joi.string().required(),
-            }).required(),
+                name: Joi.string(),
+                phone: Joi.string(),
+                province: Joi.string(),
+                district: Joi.string(),
+                street: Joi.string(),
+                zipcode: Joi.string(),
+            }),
             receiver: Joi.object({
-                name: Joi.string().required(),
-                phone: Joi.string().required(),
-                province: Joi.string().required(),
-                district: Joi.string().required(),
-                street: Joi.string().required(),
-                zipcode: Joi.string().required(),
-            }).required(),
+                name: Joi.string(),
+                phone: Joi.string(),
+                province: Joi.string(),
+                district: Joi.string(),
+                street: Joi.string(),
+                zipcode: Joi.string(),
+            }),
             meta: Joi.object({
-                type: Joi.string().valid(...typeValues).required(),
-                cost: Joi.number().required(),
+                type: Joi.string().valid(...typeValues),
+                cost: Joi.number(),
                 value: Joi.number(),
                 weight: Joi.number(),
                 note: Joi.string(),
-            }).required(),
-            status: Joi.string().valid(...statusValues).required()
+            }),
+            status: Joi.string().valid(...statusValues)
         });
+        schema = schema.fork(requiredFields, (field) => field.required());
 
         const { error } = schema.validate(body);
         if (error) {
@@ -56,7 +57,25 @@ class ShipmentService {
             const { body } = req;
 
             const validator = new ShipmentValidator();
-            const schema_error = validator.schema_validate(body);
+            const schema_error = validator.schema_validate(body, [
+                "sender",
+                "sender.name",
+                "sender.phone",
+                "sender.province",
+                "sender.district",
+                "sender.street",
+                "sender.zipcode",
+                "receiver",
+                "receiver.name",
+                "receiver.phone",
+                "receiver.province",
+                "receiver.district",
+                "receiver.street",
+                "receiver.zipcode",
+                "meta.type",
+                "meta.cost",
+                "status"
+            ]);
             if (schema_error) {
                 return res.status(400).json(schema_error);
             }

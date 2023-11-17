@@ -11,19 +11,14 @@ import Joi from "joi";
 
 class AuthValidator {
     schema_validate = (body, requiredFields = []) => {
-        const schema = {
+        let schema = Joi.object({
             username: Joi.string(),
             password: Joi.string(),
             newPassword: Joi.string()
-        };
-
-        requiredFields.forEach(field => {
-            if (schema[field]) {
-                schema[field] = schema[field].required();
-            }
         });
+        schema = schema.fork(requiredFields, (field) => field.required());
 
-        const { error } = Joi.object().keys(schema).validate(body);
+        const { error } = schema.validate(body);
         if (error) {
             return {
                 ok: false,

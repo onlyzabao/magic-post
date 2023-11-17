@@ -14,7 +14,7 @@ class StaffValidator {
     constructor() { }
     schema_validate(body, requiredFields = []) {
         const roleValues = Object.values(staffRole);
-        const schema = {
+        let schema = Joi.object({
             username: Joi.string(),
             password: Joi.string(),
             role: Joi.string().valid(...roleValues),
@@ -24,15 +24,10 @@ class StaffValidator {
             gender: Joi.string().valid("Male", "Female", "Other"),
             email: Joi.string().email(),
             active: Joi.boolean()
-        };
-
-        requiredFields.forEach(field => {
-            if (schema[field]) {
-                schema[field] = schema[field].required();
-            }
         });
+        schema = schema.fork(requiredFields, (field) => field.required());
 
-        const { error } = Joi.object().keys(schema).validate(body);
+        const { error } = schema.validate(body);
         if (error) {
             return {
                 ok: false,
