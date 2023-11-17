@@ -11,7 +11,6 @@ const authorization = (roles, statuses) => async (req, res, next) => {
         var secret = systemConfig.get("secret");
         if (token) {
             try {
-                console.log("auth")
                 jwt.verify(token, secret, async function (err, payload) {
                     if (payload) {
                         req.payload = payload;
