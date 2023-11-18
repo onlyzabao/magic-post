@@ -62,6 +62,14 @@ const ShipmentSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
+        start: {
+            type: Date,
+            required: true
+        },
+        end: {
+            type: Date,
+            // required: true
+        },
         value: {
             type: Number
         },

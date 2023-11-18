@@ -29,6 +29,8 @@ class ShipmentValidator {
             meta: Joi.object({
                 type: Joi.string().valid(...typeValues),
                 cost: Joi.number(),
+                start: Joi.date(),
+                end: Joi.date(),
                 value: Joi.number(),
                 weight: Joi.number(),
                 note: Joi.string(),
@@ -59,27 +61,32 @@ class ShipmentService {
             const validator = new ShipmentValidator();
             const schema_error = validator.schema_validate(body, [
                 "sender",
-                "sender.name",
-                "sender.phone",
-                "sender.province",
-                "sender.district",
-                "sender.street",
-                "sender.zipcode",
+                    "sender.name",
+                    "sender.phone",
+                    "sender.province",
+                    "sender.district",
+                    "sender.street",
+                    "sender.zipcode",
+
                 "receiver",
-                "receiver.name",
-                "receiver.phone",
-                "receiver.province",
-                "receiver.district",
-                "receiver.street",
-                "receiver.zipcode",
+                    "receiver.name",
+                    "receiver.phone",
+                    "receiver.province",
+                    "receiver.district",
+                    "receiver.street",
+                    "receiver.zipcode",
+
                 "meta.type",
                 "meta.cost",
+
                 "status"
             ]);
             if (schema_error) {
                 return res.status(400).json(schema_error);
             }
 
+            body.meta.start = Date.now();
+            body.meta.end = null;
             let shipment = await Shipment.create(body);
 
             const payload = {
@@ -94,6 +101,8 @@ class ShipmentService {
                     }
                 }
             });
+
+            next();
         } catch (e) {
             return res.status(400).json({
                 ok: false,
