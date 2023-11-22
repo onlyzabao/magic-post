@@ -141,3 +141,40 @@ npm run start
     - HTTP Method: GET
     - Path: /department
     - Req Params: Same as update req data, page, limit
+
+## Manage Shipment
+1. Create shipment
+
+    For POSTOFFICE-EMPLOYEE to create new shipment
+    - HTTP Method: POST
+    - Path: /shipment/create
+    - Req Data:
+        ```json
+        {
+            "sender": {
+                "name": "Nguyen Van A",
+                "phone": "0945162758",
+                "province": "Ha Noi",
+                "district": "Nam Tu Liem",
+                "street": "17 Trung Van",
+                "zipcode": "10000"
+            },
+            "receiver": {
+                "name": "Pham Thi B",
+                "phone": "0948153486",
+                "province": "Ha Noi",
+                "district": "Cau Giay",
+                "street": "144 Xuan Thuy",
+                "zipcode": "10000"
+            },
+            "meta": {
+                "type": "DOCUMENT",
+                "cost": 60000,
+                // Below are optional fields
+                "weight": 55,
+                "value": 15000,
+                "note": "As quick as posible"
+            }
+        }
+
+        ```

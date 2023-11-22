@@ -95,13 +95,14 @@ class AuthService {
                 return res.status(400).json(schema_error);
             }
 
-            const self = await Staff.findOne({ username: req.payload.username });
-            if (!self) {
-                return res.status(404).json({
-                    ok: false,
-                    errorCode: errorCode.LOGIN.USER_NOT_FOUND
-                });
-            }
+            // const self = await Staff.findOne({ username: req.payload.username });
+            // if (!self) {
+            //     return res.status(404).json({
+            //         ok: false,
+            //         errorCode: errorCode.LOGIN.USER_NOT_FOUND
+            //     });
+            // }
+            const self = req.user;
 
             if (!helper.comparePassword(body.password, self.password)) {
                 return res.status(400).json({

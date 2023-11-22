@@ -94,13 +94,14 @@ class StaffService {
             }
             
             if (staffRole.isManager(req.payload.role)) {
-                let manager = await Staff.findOne({ username: req.payload.username });
-                if (!manager) {
-                    return res.status(404).json({
-                        ok: false,
-                        errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
-                    });
-                }
+                // let manager = await Staff.findOne({ username: req.payload.username });
+                // if (!manager) {
+                //     return res.status(404).json({
+                //         ok: false,
+                //         errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
+                //     });
+                // }
+                const manager = req.user;
                 if (manager.department.toString() !== body.department) {
                     return res.status(400).json({
                         ok: false,
@@ -243,13 +244,14 @@ class StaffService {
             }
 
             if (staffRole.isManager(req.payload.role)) {
-                let manager = await Staff.findOne({ username: req.payload.username });
-                if (!manager) {
-                    return res.status(404).json({
-                        ok: false,
-                        errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
-                    });
-                }
+                // let manager = await Staff.findOne({ username: req.payload.username });
+                // if (!manager) {
+                //     return res.status(404).json({
+                //         ok: false,
+                //         errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
+                //     });
+                // }
+                const manager = req.user;
                 if (manager.department.toString() !== staff.department.toString()) {
                     return res.status(400).json({
                         ok: false,

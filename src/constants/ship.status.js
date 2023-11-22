@@ -1,4 +1,5 @@
 export default {
+    PREPARING: "PREPARING",
     PACKED: "PACKED",
     DELIVERING: "DELIVERING",
     RECEIVED: "RECEIVED",
