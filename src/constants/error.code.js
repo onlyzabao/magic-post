@@ -111,6 +111,13 @@ export default {
             message: "Failed to take action on deactivated Department"
         }
     },
+
+    SHIPMENT: {
+        SHIPMENT_NOT_EXISTS: {
+            errorCode: "SHIPMENT_NOT_EXISTS",
+            message: "Failed to find your request Shipment"
+        },
+    },
     
     GENERAL_ERROR: "GENERAL_ERROR",
     SUCCESS: "SUCCESS",

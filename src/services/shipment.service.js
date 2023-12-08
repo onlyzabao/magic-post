@@ -61,20 +61,20 @@ class ShipmentService {
             const validator = new ShipmentValidator();
             const schema_error = validator.schema_validate(body, [
                 "sender",
-                    "sender.name",
-                    "sender.phone",
-                    "sender.province",
-                    "sender.district",
-                    "sender.street",
-                    "sender.zipcode",
+                "sender.name",
+                "sender.phone",
+                "sender.province",
+                "sender.district",
+                "sender.street",
+                "sender.zipcode",
 
                 "receiver",
-                    "receiver.name",
-                    "receiver.phone",
-                    "receiver.province",
-                    "receiver.district",
-                    "receiver.street",
-                    "receiver.zipcode",
+                "receiver.name",
+                "receiver.phone",
+                "receiver.province",
+                "receiver.district",
+                "receiver.street",
+                "receiver.zipcode",
 
                 "meta.type",
                 "meta.cost",
@@ -88,7 +88,7 @@ class ShipmentService {
             let shipment = await Shipment.create(body);
 
             const pos = body.sender.street + ", " + body.sender.district + ", " + body.sender.province;
-            req.body = { 
+            req.body = {
                 shipment: shipment._id.toString(),
                 end: Date.now() + 1000,
                 receiver: req.user._id.toString(),
@@ -96,12 +96,62 @@ class ShipmentService {
                 des: req.user.department.toString(),
                 status: shipStatus.RECEIVED
             };
-          
+
             next(req, res);
 
             if (res.statusCode !== 200) {
                 await Shipment.findByIdAndDelete(shipment._id);
             }
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+    async update(req, res, next) {
+        try {
+            const { body, params } = req;
+            const validator = new ShipmentValidator;
+
+            const schema_error = validator.schema_validate(body);
+            if (schema_error) {
+                return res.status(400).json(schema_error);
+            }
+
+            let shipment = await Shipment.findById(params.id);
+            if (!shipment) {
+                return res.status(404).json({
+                    ok: false,
+                    errorCode: errorCode.SHIPMENT.SHIPMENT_NOT_EXISTS
+                });
+            }
+
+            for (const prop in req.body) {
+                if (typeof req.body[prop] === "object" && shipment[prop]) {
+                    for (const subProp in req.body[prop]) {
+                        shipment[prop][subProp] = req.body[prop][subProp] || shipment[prop][subProp];
+                    }
+                } else {
+                    shipment[prop] = req.body[prop] || shipment[prop];
+                }
+            }
+
+            shipment = await shipment.save();
+
+            const payload = {
+                shipmentId: shipment._id
+            }
+            res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
         } catch (e) {
             return res.status(400).json({
                 ok: false,

@@ -178,3 +178,10 @@ npm run start
         }
 
         ```
+
+2. Update Shipment
+
+     For POSTOFFICE-EMPLOYEE to update shipment
+    - HTTP Method: POST
+    - Path: /shipment/update/:id
+    - Req Data: Fields to be updated
