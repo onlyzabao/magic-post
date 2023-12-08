@@ -6,13 +6,21 @@ const TransactionSchema = new mongoose.Schema({
         required: true,
         ref: "Shipment"
     },
+    sender: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Staff"
+    },
+    receiver: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Staff"
+    },
     start: {
         type: Date,
         required: true
     },
     end: {
-        type: Date,
-        // required: true
+        type: Date
     },
     pos: {
         type: mongoose.Schema.Types.Mixed,

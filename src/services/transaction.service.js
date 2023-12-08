@@ -4,6 +4,7 @@ import Staff from "../models/staff";
 import errorCode from "../constants/error.code";
 import Transaction from "../models/transaction";
 import Joi from "joi";
+import staffRole from "../constants/staff.role";
 
 class TransactionValidator {
     constructor() { }
@@ -11,6 +12,8 @@ class TransactionValidator {
         const statusValues = Object.values(shipStatus);
         let schema = Joi.object({
             shipment: Joi.string(),
+            sender: Joi.string(),
+            receiver: Joi.string(),
             start: Joi.date(),
             end: Joi.date(),
             pos: Joi.string(),
@@ -43,19 +46,16 @@ class TransactionService {
                 return res.status(400).json(schema_error);
             }
 
-            const idRegex = /^[0-9a-fA-F]{24}$/;
+            const idRegex = /^[0-9a-zA-Z]{24}$/;
             if (body.pos.match(idRegex)) {
                 body.pos = new mongoose.Types.ObjectId(body.pos);
             }
             if (body.des.match(idRegex)) {
                 body.des = new mongoose.Types.ObjectId(body.des);
             }
+
             body.start = Date.now();
-            if (body.status === shipStatus.RECEIVED) {
-                body.end = Date.now();
-            } else {
-                body.end = null;
-            }
+            body.sender = req.user._id;
 
             let transaction = await Transaction.create(body);
 

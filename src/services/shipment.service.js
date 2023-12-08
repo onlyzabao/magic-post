@@ -84,13 +84,14 @@ class ShipmentService {
             }
 
             body.meta.start = Date.now();
-            body.meta.end = null;
             body.status = shipStatus.PREPARING;
             let shipment = await Shipment.create(body);
 
             const pos = body.sender.street + ", " + body.sender.district + ", " + body.sender.province;
             req.body = { 
                 shipment: shipment._id.toString(),
+                end: Date.now() + 1000,
+                receiver: req.user._id.toString(),
                 pos: pos,
                 des: req.user.department.toString(),
                 status: shipStatus.RECEIVED
@@ -101,19 +102,6 @@ class ShipmentService {
             if (res.statusCode !== 200) {
                 await Shipment.findByIdAndDelete(shipment._id);
             }
-
-            // const payload = {
-            //     body: req.body
-            // }
-            // res.status(200).json({
-            //     ok: true,
-            //     errorCode: errorCode.SUCCESS,
-            //     data: {
-            //         payload: {
-            //             ...payload
-            //         }
-            //     }
-            // });
         } catch (e) {
             return res.status(400).json({
                 ok: false,
