@@ -2,6 +2,8 @@ import errorCode from "../constants/error.code";
 import shipStatus from "../constants/ship.status";
 import shipmentType from "../constants/shipment.type";
 import Shipment from "../models/shipment";
+import transaction from "../models/transaction";
+import Transaction from "../models/transaction";
 import Joi from "joi";
 
 class ShipmentValidator {
@@ -61,20 +63,20 @@ class ShipmentService {
             const validator = new ShipmentValidator();
             const schema_error = validator.schema_validate(body, [
                 "sender",
-                "sender.name",
-                "sender.phone",
-                "sender.province",
-                "sender.district",
-                "sender.street",
-                "sender.zipcode",
+                    "sender.name",
+                    "sender.phone",
+                    "sender.province",
+                    "sender.district",
+                    "sender.street",
+                    "sender.zipcode",
 
                 "receiver",
-                "receiver.name",
-                "receiver.phone",
-                "receiver.province",
-                "receiver.district",
-                "receiver.street",
-                "receiver.zipcode",
+                    "receiver.name",
+                    "receiver.phone",
+                    "receiver.province",
+                    "receiver.district",
+                    "receiver.street",
+                    "receiver.zipcode",
 
                 "meta.type",
                 "meta.cost",
@@ -87,12 +89,10 @@ class ShipmentService {
             body.status = shipStatus.PREPARING;
             let shipment = await Shipment.create(body);
 
-            const pos = body.sender.street + ", " + body.sender.district + ", " + body.sender.province;
             req.body = {
                 shipment: shipment._id.toString(),
                 end: Date.now() + 1000,
                 receiver: req.user._id.toString(),
-                pos: pos,
                 des: req.user.department.toString(),
                 status: shipStatus.RECEIVED
             };
@@ -137,7 +137,6 @@ class ShipmentService {
                     shipment[prop] = req.body[prop] || shipment[prop];
                 }
             }
-
             shipment = await shipment.save();
 
             const payload = {
@@ -154,6 +153,93 @@ class ShipmentService {
             });
         } catch (e) {
             return res.status(400).json({
+                ok: false,
+                errorCode: errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+    async view_document(req, res, next) {
+        try {
+            const { params } = req;
+
+            const shipment = await Shipment.
+                findById(params.id).
+                select({ __v: 0 });
+            if (!shipment) {
+                return res.status(404).json({
+                    ok: false,
+                    errorCode: errorCode.SHIPMENT.SHIPMENT_NOT_EXISTS
+                });
+            }
+
+            const transactions = await Transaction.
+                find({ shipment: params.id }).
+                select({ start: 1, end: 1, pos: 1, des: 1, status: 1 }).
+                populate({
+                    path: 'pos',
+                    select: {
+                        province: 1,
+                        district: 1,
+                        street: 1,
+                        type: 1
+                    }
+                }).
+                populate({
+                    path: 'des',
+                    select: {
+                        province: 1,
+                        district: 1,
+                        street: 1,
+                        type: 1
+                    }
+                });
+
+            const payload = {
+                shipment: shipment,
+                transactions: transactions
+            }
+            res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(500).json({
+                ok: false,
+                errorCode: errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+    async view_collection(req, res, next) {
+        try {
+            const { query } = req;
+
+            const filter = query;
+            const page = parseInt(query.page) || 1;
+            const limit = parseInt(query.limit) || 10;
+            const skip = (page - 1) * limit;
+            const shipments = await Shipment.find(filter).skip(skip).limit(limit);
+
+            const payload = {
+                shipments: shipments
+            }
+            res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(500).json({
                 ok: false,
                 errorCode: errorCode.GENERAL_ERROR,
                 message: e.message

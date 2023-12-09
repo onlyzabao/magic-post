@@ -23,12 +23,12 @@ const TransactionSchema = new mongoose.Schema({
         type: Date
     },
     pos: {
-        type: mongoose.Schema.Types.Mixed,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Department"
     },
     des: {
-        type: mongoose.Schema.Types.Mixed,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Department"
     },
     status: {
         type: String,

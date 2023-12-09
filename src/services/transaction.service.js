@@ -41,22 +41,25 @@ class TransactionService {
             const { body } = req;
 
             const validator = new TransactionValidator();
-            const schema_error = validator.schema_validate(body, [ "shipment", "pos", "des", "status" ]);
+            const schema_error = validator.schema_validate(body, [ "shipment", "status" ]);
             if (schema_error) {
                 return res.status(400).json(schema_error);
             }
+            if (!(body.pos || body.des)) {
+                return res.status(404).json({
+                    ok: false,
+                    errorCode: errorCode.TRANSACTION.PARAMS_REQUIRED
+                });
+            }
 
-            const idRegex = /^[0-9a-zA-Z]{24}$/;
-            if (body.pos.match(idRegex)) {
+            if (body.pos) {
                 body.pos = new mongoose.Types.ObjectId(body.pos);
             }
-            if (body.des.match(idRegex)) {
+            if (body.des) {
                 body.des = new mongoose.Types.ObjectId(body.des);
             }
-
             body.start = Date.now();
             body.sender = req.user._id;
-
             let transaction = await Transaction.create(body);
 
             const payload = {

@@ -185,3 +185,16 @@ npm run start
     - HTTP Method: POST
     - Path: /shipment/update/:id
     - Req Data: Fields to be updated
+
+3. View Document
+
+    For user to view shipment status
+    - HTTP Method: GET
+    - Path: /shipment/:id
+
+4. View Collection
+
+    For Staff to view collection of shipments
+    - HTTP Method: GET
+    - Path: /shipment
+    - Req Params: Same as update req data, page, limit

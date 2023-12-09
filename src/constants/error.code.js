@@ -118,6 +118,13 @@ export default {
             message: "Failed to find your request Shipment"
         },
     },
+
+    TRANSACTION: {
+        PARAMS_REQUIRED: {
+            errorCode: "PARAMS_MISSING",
+            message: "Transaction must have pos or des"
+        },
+    },
     
     GENERAL_ERROR: "GENERAL_ERROR",
     SUCCESS: "SUCCESS",

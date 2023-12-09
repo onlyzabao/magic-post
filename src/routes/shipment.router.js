@@ -20,21 +20,18 @@ export default [{
                 staffRole.POSTOFFICE_EMMPLOYEE
             ]
         },
-        // {
-        //     httpMethod: "get",
-        //     path: "/shipment",
-        //     method: "view_collection",
-        //     roles: [
-        //         "ALL"
-        //     ]
-        // },
-        // {
-        //     httpMethod: "get",
-        //     path: "/shipment/:id",
-        //     method: "view_document",
-        //     roles: [
-        //         "ALL"
-        //     ]
-        // }
+        {
+            httpMethod: "get",
+            path: "/shipment",
+            method: "view_collection",
+            roles: [
+                "ALL"
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/shipment/:id",
+            method: "view_document"
+        }
     ]
 }];
