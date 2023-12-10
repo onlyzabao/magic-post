@@ -6,39 +6,61 @@ export default [{
     methods: [
         {
             httpMethod: "post",
-            path: "/staff/create",
-            method: "create",
+            path: "/staff/create/post-office-emp",
+            method: "create_postoffice_emp",
             roles: [
-                staffRole.BOSS,
-                staffRole.STORAGE_MANAGER,
                 staffRole.POSTOFFICE_MANAGER
             ]
         },
         {
-            httpMethod: "put",
-            path: "/staff/update/:id",
-            method: "update",
+            httpMethod: "post",
+            path: "/staff/create/post-office-mng",
+            method: "create_postoffice_mng",
             roles: [
-                staffRole.BOSS,
-                staffRole.STORAGE_MANAGER,
-                staffRole.POSTOFFICE_MANAGER
+                staffRole.BOSS
             ]
         },
         {
-            httpMethod: "get",
-            path: "/staff/:id",
-            method: "view_document",
+            httpMethod: "post",
+            path: "/staff/create/storage-emp",
+            method: "create_storage_emp",
             roles: [
-                "ALL"
+                staffRole.STORAGE_MANAGER
             ]
         },
         {
-            httpMethod: "get",
-            path: "/staff",
-            method: "view_collection",
+            httpMethod: "post",
+            path: "/staff/create/storage-mng",
+            method: "create_storage_mng",
             roles: [
-                "ALL"
+                staffRole.BOSS
             ]
         },
+        // {
+        //     httpMethod: "put",
+        //     path: "/staff/update/:id",
+        //     method: "update",
+        //     roles: [
+        //         staffRole.BOSS,
+        //         staffRole.STORAGE_MANAGER,
+        //         staffRole.POSTOFFICE_MANAGER
+        //     ]
+        // },
+        // {
+        //     httpMethod: "get",
+        //     path: "/staff/:id",
+        //     method: "view_document",
+        //     roles: [
+        //         "ALL"
+        //     ]
+        // },
+        // {
+        //     httpMethod: "get",
+        //     path: "/staff",
+        //     method: "view_collection",
+        //     roles: [
+        //         "ALL"
+        //     ]
+        // },
     ]
 }];

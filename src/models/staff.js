@@ -16,7 +16,14 @@ const StaffSchema = new mongoose.Schema({
     },
     department: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Department"
+        ref: "Department",
+        validate: {
+            validator: async function (id) {
+                const department = await mongoose.model("Department").findById(id);
+                return department !== null && department.active === true;
+            },
+            message: "Invalid 'department' reference."
+        }
     },
     firstname: {
         type: String,

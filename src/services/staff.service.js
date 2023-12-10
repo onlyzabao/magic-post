@@ -1,13 +1,8 @@
 import helper from "../utils/helper";
 import errorCode from "../constants/error.code";
-import jwt from "jsonwebtoken";
-import systemConfig from "config";
-import ms from "ms";
 import * as _ from "lodash";
 import Staff from "../models/staff";
-import Department from "../models/department";
 import staffRole from "../constants/staff.role";
-import departmentType from "../constants/department.type";
 import Joi from "joi";
 
 class StaffValidator {
@@ -37,122 +32,22 @@ class StaffValidator {
         }
         return null;
     }
-    async username_validate(body) {
-        let user = await Staff.findOne({ username: body.username });
-        if (user) {
-            return {
-                ok: false,
-                errorCode: errorCode.STAFF.USERNAME_EXISTS
-            }
-        }
-        return null;
-    }
-    async department_validate(body) {
-        let department = await Department.findById(body.department);
-        if (!department) {
-            return {
-                ok: false,
-                errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
-            }
-        }
-        if (department.type === departmentType.STORAGE) {
-            if (!(body.role === staffRole.STORAGE_EMMPLOYEE || body.role === staffRole.STORAGE_MANAGER)) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.STAFF.DEPARTMENT_PARAMS_INVALID
-                }
-            }
-        }
-        if (department.type === departmentType.POSTOFFICE) {
-            if (!(body.role === staffRole.POSTOFFICE_EMMPLOYEE || body.role === staffRole.POSTOFFICE_MANAGER)) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.STAFF.DEPARTMENT_PARAMS_INVALID
-                }
-            }
-        }
-        if (department.active === false) {
-            return {
-                ok: false,
-                errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
-            }
-        }
-        return null;
-    }
 }
 
 class StaffService {
     constructor() { }
-    async create(req, res, next) {
-        try {
-            const { body } = req;
-            const validator = new StaffValidator;
-            
-            const schema_error = validator.schema_validate(body, [ "role", "firstname", "lastname", "gender", "email" ]);
-            if (schema_error) {
-                return res.status(400).json(schema_error);
-            }
-            
-            if (staffRole.isManager(req.payload.role)) {
-                // let manager = await Staff.findOne({ username: req.payload.username });
-                // if (!manager) {
-                //     return res.status(404).json({
-                //         ok: false,
-                //         errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
-                //     });
-                // }
-                const manager = req.user;
-                if (manager.department.toString() !== body.department) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.AUTH.ROLE_INVALID
-                    });
-                }
-                if (body.role === staffRole.BOSS || body.role === staffRole.STORAGE_MANAGER || body.role === staffRole.POSTOFFICE_MANAGER) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.AUTH.ROLE_INVALID
-                    });
-                }
-            }
+    async create(body) {     
+        const validator = new StaffValidator();       
+        const schema_error = validator.schema_validate(body);
+        if (schema_error) throw schema_error;
 
-            const department_error = await validator.department_validate(body);
-            if (department_error) {
-                return res.status(400).join(department_error);
-            }
+        body.username = helper.generateID(body.firstname, body.lastname);
+        body.password = helper.generateHash(body.username);
+        body.active = true;
+        let staff = await Staff.create(body);
 
-            body.username = helper.generateID(body.firstname, body.lastname);
-            body.password = helper.generateHash(body.username);
-            body.active = true;
-            const user = await Staff.create(body);
-
-            const payload = {
-                username: user.username,
-                role: user.role,
-            }
-            const token = jwt.sign(payload, systemConfig.get("secret"), {
-                expiresIn: ms('1y')
-            });
-            res.status(200).json({
-                ok: true,
-                errorCode: errorCode.SUCCESS,
-                data: {
-                    token: `Bearer ${token}`,
-                    payload: {
-                        ...payload,
-                        username: payload.username
-                    }
-                }
-
-            });
-        } catch (e) {
-            console.log(e);
-            return res.status(400).json({
-                ok: false,
-                errorCode: errorCode.GENERAL_ERROR,
-                message: e.message
-            })
-        }
+        delete staff._doc.password;
+        return staff;
     }
 
     async view_document(req, res, next) {

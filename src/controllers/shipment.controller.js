@@ -3,6 +3,7 @@ import TransactionService from "../services/transaction.service";
 import errorCode from "../constants/error.code";
 import shipStatus from "../constants/ship.status";
 import Shipment from "../models/shipment";
+import * as _ from "lodash";
 
 export default class ShipmentController {
     constructor() { }
