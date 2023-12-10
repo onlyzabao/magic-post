@@ -6,11 +6,10 @@ export default [{
     methods: [
         {
             httpMethod: "post",
-            path: "/transaction/create",
-            method: "create",
+            path: "/transaction/receive-shipment",
+            method: "receive_shipment",
             roles: [
-                staffRole.POSTOFFICE_EMMPLOYEE,
-                staffRole.STORAGE_EMMPLOYEE
+                staffRole.POSTOFFICE_EMMPLOYEE
             ]
         },
         {

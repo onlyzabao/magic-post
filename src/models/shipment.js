@@ -1,5 +1,20 @@
 import mongoose from "mongoose";
 
+const ItemSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    quantity: {
+        type: Number,
+        required: true
+    },
+    value: {
+        type: Number,
+        required: true
+    }
+});
+
 const ShipmentSchema = new mongoose.Schema({
     sender: {
         name: {
@@ -68,11 +83,8 @@ const ShipmentSchema = new mongoose.Schema({
         },
         end: {
             type: Date,
-            // required: true
         },
-        value: {
-            type: Number
-        },
+        item: [ItemSchema],
         weight: {
             type: Number
         },
