@@ -13,14 +13,15 @@ export default [{
                 staffRole.STORAGE_EMMPLOYEE
             ]
         },
-        // {
-        //     httpMethod: "put",
-        //     path: "/shipment/update/:id",
-        //     method: "update",
-        //     roles: [
-        //         staffRole.POSTOFFICE_EMMPLOYEE
-        //     ]
-        // },
+        {
+            httpMethod: "put",
+            path: "/transaction/update/:id",
+            method: "update",
+            roles: [
+                staffRole.POSTOFFICE_EMMPLOYEE,
+                staffRole.STORAGE_EMMPLOYEE
+            ]
+        },
         // {
         //     httpMethod: "get",
         //     path: "/shipment",

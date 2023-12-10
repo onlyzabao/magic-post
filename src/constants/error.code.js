@@ -86,6 +86,10 @@ export default {
         DEPARTMENT_PARAMS_INVALID: {
             errorCode: "DEPARTMENT_PARAMS_INVALID",
             message: "Department must be associated with Role"
+        },
+        STAFF_NOT_ACTIVE: {
+            errorCode: "STAFF_NOT_ACTIVE",
+            message: "Failed to take action on deactivated Staff"
         }
     },
 
@@ -123,6 +127,10 @@ export default {
         PARAMS_REQUIRED: {
             errorCode: "PARAMS_MISSING",
             message: "Transaction must have pos or des"
+        },
+        TRANSACTION_NOT_EXISTS: {
+            errorCode: "TRANSACTION_NOT_EXISTS",
+            message: "Failed to find your request Transaction"
         },
     },
     
