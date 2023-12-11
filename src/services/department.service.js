@@ -33,171 +33,77 @@ class DepartmentValidator {
 
 class DepartmentService {
     constructor() { }
-    async create(req, res, next) {
-        try {
-            const { body } = req;
-            const validator = new DepartmentValidator;
+    async create(body) {
+        const validator = new DepartmentValidator;
+        const schema_error = validator.schema_validate(body);
+        if (schema_error) throw schema_error;
 
-            const schema_error = validator.schema_validate(body, [
-                "province",
-                "district",
-                "street",
-                "type"
-            ]);
-            if (schema_error) {
-                return res.status(400).json(schema_error);
-            }
+        body.active = true;
+        let department = await Department.create(body);
 
-            body.active = true;
-
-            let department = await Department.create(body);
-
-            const payload = {
-                departmentId: department._id
-            }
-            res.status(200).json({
-                ok: true,
-                errorCode: errorCode.SUCCESS,
-                data: {
-                    payload: {
-                        ...payload
-                    }
-                }
-            });
-        } catch (e) {
-            return res.status(400).json({
-                ok: false,
-                errorCode: errorCode.GENERAL_ERROR,
-                message: e.message
-            });
-        }
+        return department._id;
     }
 
-    async update(req, res, next) {
-        try {
-            const { body, params } = req;
-            const validator = new DepartmentValidator;
+    async update(id, body) {
+        const validator = new DepartmentValidator;
+        const schema_error = validator.schema_validate(body);
+        if (schema_error) throw schema_error;
 
-            const schema_error = validator.schema_validate(body);
-            if (schema_error) {
-                return res.status(400).json(schema_error);
-            }
-        
-            let department = await Department.findById(params.id);
-            if (!department) {
-                return res.status(404).json({
-                    ok: false,
-                    errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
-                });
-            }
-            
-            if (body.type) {
-                const type_error = await validator.type_validate(body);
-                if (type_error) {
-                    return res.status(400).json(type_error);
-                }
-                if (body.type === departmentType.STORAGE) {
-                    body.cfs = undefined;
-                    body.zipcode = undefined;
-                }
-            }
+        let department = await Department.findById(id);
+        if (!department) throw errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS;
 
-            Object.assign(department, body);
+        Object.assign(department, body);
+        department = await department.save();
 
-            department = await department.save();
-
-            const payload = {
-                departmentId: department._id
-            }
-            res.status(200).json({
-                ok: true,
-                errorCode: errorCode.SUCCESS,
-                data: {
-                    payload: {
-                        ...payload
-                    }
-                }
-            });
-        } catch (e) {
-            return res.status(500).json({
-                ok: false,
-                errorCode: errorCode.GENERAL_ERROR,
-                message: e.message
-            });
-        }
+        return department._id;
     }
 
-    async view_document(req, res, next) {
-        try {
-            const { params } = req;
-
-            const department = await Department.findById(params.id);
-    
-            if (!department) {
-                return res.status(404).json({
-                    ok: false,
-                    errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
-                });
-            }
-            
-            const payload = {
-                department: department
-            }
-            res.status(200).json({
-                ok: true,
-                errorCode: errorCode.SUCCESS,
-                data: {
-                    payload: {
-                        ...payload
-                    }
+    async view(id) {
+        let department = await Department.
+            findById(id).
+            populate({
+                path: 'cfs',
+                select: {
+                    province: 1,
+                    district: 1,
+                    street: 1,
+                    type: 1
                 }
             });
-        } catch (e) {
-            return res.status(500).json({
-                ok: false,
-                errorCode: errorCode.GENERAL_ERROR,
-                message: e.message
-            });
-        }
+
+        if (!department) throw errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS;
+
+        return department;
     }
 
-    async view_collection(req, res, next) {
-        try {
-            const { query } = req;
-
-            const filter = {};
-            const queryFields = ['province', 'district', 'street', 'type', 'cfs', 'zipcode', 'active'];
-            Object.keys(query).forEach(key => {
-                if (queryFields.includes(key)) {
-                    filter[key] = query[key];
-                }
-            });
-
-            const page = parseInt(query.page) || 1;
-            const limit = parseInt(query.limit) || 10;
-            const skip = (page - 1) * limit;
-
-            const departments = await Department.find(filter).skip(skip).limit(limit);
-            
-            const payload = {
-                departments: departments                
+    async list(query) {
+        const filter = {};
+        const regexFields = ['province', 'district', 'street'];
+        const queryFields = ['type', 'cfs', 'zipcode', 'active'];
+        Object.keys(query).forEach(key => {
+            if (regexFields.includes(key)) {
+                filter[key] = { $regex: query[key] };
+            } else if (queryFields.includes(key)) {
+                filter[key] = query[key];
             }
-            res.status(200).json({
-                ok: true,
-                errorCode: errorCode.SUCCESS,
-                data: {
-                    payload: {
-                        ...payload
-                    }
-                }
-            });
-        } catch (e) {
-            return res.status(500).json({
-                ok: false,
-                errorCode: errorCode.GENERAL_ERROR,
-                message: e.message
-            });
-        }
+        });
+
+        const page = parseInt(query.page) || 1;
+        const limit = parseInt(query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        let departments = await Department.
+            find(filter).
+            select({
+                province: 1,
+                district: 1,
+                street: 1,
+                type: 1
+            }).
+            skip(skip).
+            limit(limit);
+
+        return departments;
     }
 }
 

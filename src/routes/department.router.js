@@ -23,17 +23,17 @@ export default [{
         {
             httpMethod: "get",
             path: "/department",
-            method: "view_collection",
+            method: "list",
             roles: [
-                "ALL"
+                staffRole.BOSS
             ]
         },
         {
             httpMethod: "get",
             path: "/department/:id",
-            method: "view_document",
+            method: "view",
             roles: [
-                "ALL"
+                staffRole.BOSS
             ]
         }
     ]
