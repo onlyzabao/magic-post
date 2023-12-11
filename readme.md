@@ -43,19 +43,28 @@ MagicPost là công ty hoạt động trong lĩnh vực chuyển phát. Công ty
 ### Chức Năng Lãnh Đạo Công Ty
 - Quản lý hệ thống các điểm giao dịch và điểm tập kết.
     ```js
+    POST /department/create
     {
         "province": "Ho Chi Minh",
         "district": "Quan 1",
         "street": "135 Nguyen Hue",
-
         // see constants/department.type.js
         "type": "POSTOFFICE",
-
         // if department type is STORAGE, no need for these fields below
         "cfs": "654df7b079626d8a284e9a75", // STORAGE id
         "zipcode": "70000"
     }
     ```
+    ```js
+    PUT /department/update/:id
+    ```
+    ```js
+    GET /department/:id
+    ```
+    ```js
+    GET /department
+    ```
+
 - Quản lý tài khoản trưởng điểm điểm tập kết và điểm giao dịch. Mỗi điểm giao dịch hoặc điểm tập kết có một tài khoản trưởng điểm.
     ```js
     POST /staff/manager/create
