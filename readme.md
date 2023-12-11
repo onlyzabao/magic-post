@@ -34,167 +34,139 @@ npm run start
         }
         ```
 
-## Manage Staff
-1. Create Staff Account
+# MagicPost
 
-    For BOSS to create MANAGER's accounts and for MANAGER to create EMPLOYEE's accounts
-    - HTTP Method: POST
-    - Path: /staff/create
-    - Req Data:
-        ```json
-        { 
-            //see constants/staff.role.js
-            "role": "STORAGE-MANAGER",
-            
-            // if staff role is BOSS, no need for this field. 
-            // Otherwise, it's the department id that the staff is working on
-            "department": "654df7b079626d8a284e9a75",  
-            
-            "name": "Nguyen Tran Gia Bao",
-            "gender": "Male",
-            "email": "only.zabao@example.com"
+MagicPost là công ty hoạt động trong lĩnh vực chuyển phát. Công ty này có các điểm giao dịch phủ khắp cả nước. Mỗi điểm giao dịch phụ trách một vùng. Ngoài các điểm giao dịch, công ty cũng có nhiều điểm tập kết hàng hóa. Mỗi điểm giao dịch sẽ làm việc với một điểm tập kết. Ngược lại, một điểm tập kết sẽ làm việc với nhiều điểm giao dịch.
+
+## Chức Năng Cho Từng Đối Tượng Sử Dụng
+
+### Chức Năng Lãnh Đạo Công Ty
+- Quản lý hệ thống các điểm giao dịch và điểm tập kết.
+    ```js
+    {
+        "province": "Ho Chi Minh",
+        "district": "Quan 1",
+        "street": "135 Nguyen Hue",
+
+        // see constants/department.type.js
+        "type": "POSTOFFICE",
+
+        // if department type is STORAGE, no need for these fields below
+        "cfs": "654df7b079626d8a284e9a75", // STORAGE id
+        "zipcode": "70000"
+    }
+    ```
+- Quản lý tài khoản trưởng điểm điểm tập kết và điểm giao dịch. Mỗi điểm giao dịch hoặc điểm tập kết có một tài khoản trưởng điểm.
+    ```js
+    POST /staff/manager/create
+    Body:
+    {
+        "role": "POSTOFFICE-MANAGER" // See constants/staff.role.js
+        "department": "654df7b079626d8a284e9a75" // Corresponding to role
+        "firstname": "Gia Bao",
+        "lastname": "Nguyen Tran",
+        "gender": "Male",
+        "email": "only.zabao@example.com"
+    }
+    ```
+    ```js
+    PUT /staff/manager/update/:id
+    ```
+    ```js
+    GET /staff/manager/:id
+    ```
+    ```js
+    GET /staff/manager
+    ```
+
+- Thống kê hàng gửi, hàng nhận trên toàn quốc, từng điểm giao dịch hoặc điểm tập kết.
+
+### Chức Năng Trưởng Điểm Tại Điểm Giao Dịch
+- Quản lý tài khoản cho giao dịch viên tại điểm giao dịch.
+    ```js
+    POST /staff/employee/create
+    Body:
+    {     
+        "firstname": "Gia Bao",
+        "lastname": "Nguyen Tran",
+        "gender": "Male",
+        "email": "only.zabao@example.com"
+    }
+    ```
+    ```js
+    PUT /staff/employee/update/:id
+    ```
+    ```js
+    GET /staff/employee/:id
+    ```
+    ```js
+    GET /staff/employee
+    ```
+
+- Thống kê hàng gửi, hàng nhận tại điểm giao dịch.
+
+### Chức Năng Giao Dịch Viên Tại Điểm Giao Dịch
+- Ghi nhận hàng cần gửi của khách (người gửi), in giấy biên nhận chuyển phát và phát cho khách hàng.
+    ```js
+    POST /shipment/create
+    Body:
+    {
+        // Address field must be correct according to real location
+        "sender": {
+            "name": "Nguyen Van A",
+            "phone": "0945162758",
+            "province": "Ha Noi",
+            "district": "Nam Tu Liem",
+            "street": "17 Trung Van",
+            "zipcode": "10000"
+        },
+        "receiver": {
+            "name": "Pham Thi B",
+            "phone": "0948153486",
+            "province": "Ha Noi",
+            "district": "Cau Giay",
+            "street": "144 Xuan Thuy",
+            "zipcode": "10000"
+        },
+        "meta": {
+            "type": "DOCUMENT", // See constant/shipment.type.js
+            "cost": 60000,
+            // Below are optional fields
+            "note": "As quick as posible",
+            "item": [
+                {
+                    "name": "book",
+                    "quantity": 1,
+                    "value": 15000
+                }
+            ]
         }
+    }
 
-        ```
-2. View one Staff
+    ```
+- Tạo đơn chuyển hàng gửi đến điểm tập kết mỗi/trước khi đem hàng gửi đến điểm tập kết.
+- Xác nhận (đơn) hàng về từ điểm tập kết.
+- Tạo đơn hàng cần chuyển đến tay người nhận.
+- Xác nhận hàng đã chuyển đến tay người nhận theo .
+- Xác nhận hàng không chuyển được đến người nhận và trả lại điểm giao dịch.
+- Thống kê các hàng đã chuyển thành công, các hàng chuyển không thành công và trả lại điểm giao dịch.
 
-    To see data of a Staff
-    - HTTP Method: GET
-    - Path: /staff/:id
+### Chức Năng Trưởng Điểm Tại Điểm Tập Kết
+- Quản lý tài khoản cho nhân viên viên tại điểm tập kết.
+    ```js
+    // Same as Post-office manager
+    ```
 
-3. View a list of Staffs
+- Thống kê hàng đi, đến.
 
-    To see a list of Staffs
-    - HTTP Method: GET
-    - Path: /staff
-    - Req Params: Same as update req data, page, limit
+### Chức Năng Nhân Viên Tại Điểm Tập Kết
+- Xác nhận (đơn) hàng đi từ điểm giao dịch chuyển đến.
+- Tạo đơn chuyển hàng đến điểm tập kết đích (ứng với điểm giao dịch đích, tức điểm giao dịch phụ trách vùng ứng với địa chỉ của người nhận).
+- Xác nhận (đơn) hàng nhận về từ điểm tập kết khác.
+- Tạo đơn chuyển hàng đến điểm giao dịch đích.
 
-4. Update Staff
-
-    For BOSS, MANAGER to update Staff
-    - HTTP Method: PUT
-    - Paht: /staff/update/:id
-    - Req Data:
-        ```json
-        {
-            // only provide fields that are need to be updated
-            "username": "21020751",
-            "password": "21020751",
-            "role": "STORAGE-MANAGER",
-            "department": "654df7b079626d8a284e9a75",  
-            "name": "Nguyen Tran Gia Bao",
-            "gender": "Male",
-            "email": "only.zabao@example.com",
-            "active": false
-        }
-        ```
-
-## Manage Department
-1. Create Department
-
-    For BOSS to create Department
-    - HTTP Method: POST
-    - Path: /department/create
-    - Req Data:
-        ```json
-        {
-            "province": "Ho Chi Minh",
-            "district": "Quan 1",
-            "street": "135 Nguyen Hue",
-
-            // see constants/department.type.js
-            "type": "POSTOFFICE",
-
-            // if department type is STORAGE, no need for these fields below
-            "cfs": "654df7b079626d8a284e9a75", // STORAGE id
-            "zipcode": "70000"
-        }
-
-        ```
-2. Update Department
-
-    For BOSS to update Department
-    - HTTP Method: PUT
-    - Paht: /department/update/:id
-    - Req Data:
-        ```json
-        {
-            // only provide fields that are need to be updated
-            "province": "Ho Chi Minh",
-            "district": "Quan 1",
-            "street": "135 Nguyen Hue",
-            "type": "POSTOFFICE",
-            "cfs": "654df7b079626d8a284e9a75",
-            "zipcode": "70000",
-            "active": false
-        }
-        ```
-3. View one Department
-
-    For BOSS, MANAGER to see data of a Department
-    - HTTP Method: GET
-    - Path: /department/:id
-
-4. View a list of Departments
-
-    For BOSS to see a list of Department with filter
-    - HTTP Method: GET
-    - Path: /department
-    - Req Params: Same as update req data, page, limit
-
-## Manage Shipment
-1. Create shipment
-
-    For POSTOFFICE-EMPLOYEE to create new shipment
-    - HTTP Method: POST
-    - Path: /shipment/create
-    - Req Data:
-        ```json
-        {
-            "sender": {
-                "name": "Nguyen Van A",
-                "phone": "0945162758",
-                "province": "Ha Noi",
-                "district": "Nam Tu Liem",
-                "street": "17 Trung Van",
-                "zipcode": "10000"
-            },
-            "receiver": {
-                "name": "Pham Thi B",
-                "phone": "0948153486",
-                "province": "Ha Noi",
-                "district": "Cau Giay",
-                "street": "144 Xuan Thuy",
-                "zipcode": "10000"
-            },
-            "meta": {
-                "type": "DOCUMENT",
-                "cost": 60000,
-                // Below are optional fields
-                "weight": 55,
-                "value": 15000,
-                "note": "As quick as posible"
-            }
-        }
-
-        ```
-
-2. Update Shipment
-
-     For POSTOFFICE-EMPLOYEE to update shipment
-    - HTTP Method: POST
-    - Path: /shipment/update/:id
-    - Req Data: Fields to be updated
-
-3. View Document
-
-    For user to view shipment status
-    - HTTP Method: GET
-    - Path: /shipment/:id
-
-4. View Collection
-
-    For Staff to view collection of shipments
-    - HTTP Method: GET
-    - Path: /shipment
-    - Req Params: Same as update req data, page, limit
+### Chức Năng Cho Khách Hàng
+- Tra cứu trạng thái và tiến trình chuyển phát của kiện hàng mình gửi.
+    ```js
+    GET /shipment/:id
+    ```
