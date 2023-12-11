@@ -1,4 +1,7 @@
-# Magic Post
+# MagicPost
+
+MagicPost là công ty hoạt động trong lĩnh vực chuyển phát. Công ty này có các điểm giao dịch phủ khắp cả nước. Mỗi điểm giao dịch phụ trách một vùng. Ngoài các điểm giao dịch, công ty cũng có nhiều điểm tập kết hàng hóa. Mỗi điểm giao dịch sẽ làm việc với một điểm tập kết. Ngược lại, một điểm tập kết sẽ làm việc với nhiều điểm giao dịch.
+
 Build:
 ```bash
 npm run build
@@ -7,38 +10,27 @@ Run:
 ```bash
 npm run start
 ```
-# API
-## Authentication
-1. Login
-
-    - HTTP Method: POST
-    - Path: /auth/login
-    - Req body:
-        ```json
-        {
-            "username": "21020751",
-            "password": "21020751"
-        }
-        ```
-    - Res payload: Token
-
-2. Change password
-
-    - HTTP Method: PUT
-    - Path: /auth/password/change
-    - Req body:
-        ```json
-        {
-            "password": "21020751",
-            "newPassword": "21020755"
-        }
-        ```
-
-# MagicPost
-
-MagicPost là công ty hoạt động trong lĩnh vực chuyển phát. Công ty này có các điểm giao dịch phủ khắp cả nước. Mỗi điểm giao dịch phụ trách một vùng. Ngoài các điểm giao dịch, công ty cũng có nhiều điểm tập kết hàng hóa. Mỗi điểm giao dịch sẽ làm việc với một điểm tập kết. Ngược lại, một điểm tập kết sẽ làm việc với nhiều điểm giao dịch.
 
 ## Chức Năng Cho Từng Đối Tượng Sử Dụng
+
+### Chức Năng Nhân Viên Nói Chung
+- Đăng nhập tài khoản nhân viên.
+     ```js
+    {
+        POST /auth/login
+        "username": "21020751",
+        "password": "21020751"
+    }
+    ```
+
+- Đổi mật khẩu tài khoản nhân viên.
+    ```js
+    {
+        PUT /auth/password/change
+        "password": "21020751",
+        "newPassword": "21020755"
+    }
+    ```
 
 ### Chức Năng Lãnh Đạo Công Ty
 - Quản lý hệ thống các điểm giao dịch và điểm tập kết.
