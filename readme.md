@@ -16,8 +16,8 @@ npm run start
 ### Chức Năng Nhân Viên Nói Chung
 - Đăng nhập tài khoản nhân viên.
      ```js
+    POST /auth/login
     {
-        POST /auth/login
         "username": "21020751",
         "password": "21020751"
     }
@@ -25,8 +25,8 @@ npm run start
 
 - Đổi mật khẩu tài khoản nhân viên.
     ```js
+    PUT /auth/password/change
     {
-        PUT /auth/password/change
         "password": "21020751",
         "newPassword": "21020755"
     }
