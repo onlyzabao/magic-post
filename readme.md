@@ -168,5 +168,5 @@ MagicPost là công ty hoạt động trong lĩnh vực chuyển phát. Công ty
 ### Chức Năng Cho Khách Hàng
 - Tra cứu trạng thái và tiến trình chuyển phát của kiện hàng mình gửi.
     ```js
-    GET /shipment/:id
+    GET /shipment/track/:id
     ```

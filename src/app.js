@@ -7,6 +7,7 @@ import mongoConnect from "./utils/mongo.connector";
 import errorHandle from "./middlewares/errorHandle";
 import systemConfig from "config";
 import logger from "./utils/logger";
+import cookieParser from 'cookie-parser';
 
 const HOSTNAME = systemConfig.get('hostname') || 'localhost';
 const PORT = systemConfig.get('port') || 3000;
@@ -14,6 +15,7 @@ const PORT = systemConfig.get('port') || 3000;
 mongoConnect();
 
 const app = express();
+app.use(cookieParser());
 app.use(cors({
     origin: '*',
     optionsSuccessStatus: 200

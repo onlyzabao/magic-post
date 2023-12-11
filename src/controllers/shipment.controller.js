@@ -41,7 +41,7 @@ export default class ShipmentController {
 
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             });
         }
@@ -67,7 +67,7 @@ export default class ShipmentController {
     //     } catch (e) {
     //         return res.status(400).json({
     //             ok: false,
-    //             errorCode: e.errorCode,
+    //             errorCode: e.errorCode || errorCode.GENERAL_ERROR,
     //             message: e.message
     //         });
     //     }
@@ -93,13 +93,13 @@ export default class ShipmentController {
     //     } catch (e) {
     //         return res.status(400).json({
     //             ok: false,
-    //             errorCode: e.errorCode,
+    //             errorCode: e.errorCode || errorCode.GENERAL_ERROR,
     //             message: e.message
     //         });
     //     }
     // }
     
-    view = async (req, res) => {
+    track = async (req, res) => {
         try {
             const { params } = req;
             var shipment = await ShipmentService.view(params.id);
@@ -121,7 +121,7 @@ export default class ShipmentController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             });
         }

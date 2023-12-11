@@ -35,7 +35,7 @@ export default class StaffController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             })
         }
@@ -43,9 +43,12 @@ export default class StaffController {
 
     update_employee = async (req, res) => {
         try {
-            const { body, params } = req;
+            const { body, params, cookies } = req;
+            if (!cookies['view-employee']) throw errorCode.AUTH.ROLE_INVALID;
             if (body.role || body.department) throw errorCode.AUTH.ROLE_INVALID;
             const employee = await StaffService.update(params.id, body);
+
+            res.clearCookie('view-employee');
 
             const payload = {
                 employee: employee
@@ -62,7 +65,7 @@ export default class StaffController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             })
         }
@@ -70,8 +73,12 @@ export default class StaffController {
 
     view_employee = async (req, res) => {
         try {
-            const { params } = req;
+            const { params, cookies } = req;
+            if (!cookies['list-employee']) throw errorCode.AUTH.ROLE_INVALID;
             const employee = await StaffService.view(params.id);
+
+            res.clearCookie('list-employee');
+            res.cookie('view-employee', true, { httpOnly: true });
 
             const payload = {
                 employee: employee
@@ -88,7 +95,7 @@ export default class StaffController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             })
         }
@@ -100,6 +107,8 @@ export default class StaffController {
             const manager = req.user;
             query.department = manager.department;
             const employees = await StaffService.list(query);
+
+            res.cookie('list-employee', true, { httpOnly: true });
 
             const payload = {
                 employees: employees
@@ -116,7 +125,7 @@ export default class StaffController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             })
         }
@@ -147,7 +156,7 @@ export default class StaffController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             })
         }
@@ -156,8 +165,11 @@ export default class StaffController {
     update_manager = async (req, res) => {
         try {
             const { body, params } = req;
+            if (!cookies['view-manager']) throw errorCode.AUTH.ROLE_INVALID;
             if (body.role && !staffRole.isManager(body.role)) throw errorCode.AUTH.ROLE_INVALID;
             const manager = await StaffService.update(params.id, body);
+
+            res.clearCookie('view-manager');
 
             const payload = {
                 manager: manager
@@ -174,7 +186,7 @@ export default class StaffController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             })
         }
@@ -182,8 +194,12 @@ export default class StaffController {
 
     view_manager = async (req, res) => {
         try {
-            const { params } = req;
+            const { params, cookies } = req;
+            if (!cookies['list-manager']) throw errorCode.AUTH.ROLE_INVALID;
             const manager = await StaffService.view(params.id);
+
+            res.clearCookie('list-manager');
+            res.cookie('view-manager', true, { httpOnly: true });
 
             const payload = {
                 manager: manager
@@ -200,7 +216,7 @@ export default class StaffController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             })
         }
@@ -211,6 +227,8 @@ export default class StaffController {
             const { query } = req;
             query.role = [ staffRole.POSTOFFICE_MANAGER, staffRole.STORAGE_MANAGER ];
             const managers = await StaffService.list(query);
+
+            res.cookie('list-manager', true, { httpOnly: true });
 
             const payload = {
                 managers: managers
@@ -227,7 +245,7 @@ export default class StaffController {
         } catch (e) {
             return res.status(400).json({
                 ok: false,
-                errorCode: e.errorCode,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
                 message: e.message
             })
         }

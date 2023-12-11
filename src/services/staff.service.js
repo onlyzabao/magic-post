@@ -36,8 +36,8 @@ class StaffValidator {
 
 class StaffService {
     constructor() { }
-    async create(body) {     
-        const validator = new StaffValidator();       
+    async create(body) {
+        const validator = new StaffValidator();
         const schema_error = validator.schema_validate(body);
         if (schema_error) throw schema_error;
 
@@ -51,7 +51,17 @@ class StaffService {
     }
 
     async view(id) {
-        let staff = await Staff.findOne({ username: id });
+        let staff = await Staff.
+            findOne({ username: id }).
+            populate({
+                path: 'department',
+                select: {
+                    province: 1,
+                    district: 1,
+                    street: 1,
+                    type: 1
+                }
+            });
         if (!staff) throw errorCode.STAFF.STAFF_NOT_EXISTS;
 
         delete staff._doc.password;
@@ -60,9 +70,11 @@ class StaffService {
 
     async list(query) {
         const filter = {};
-        const queryFields = ['username', 'role', 'department', 'firstname', 'lastname', 'gender', 'email', 'active'];
+        const regexFields = ['username', 'firstname', 'lastname', 'email' ];
         Object.keys(query).forEach(key => {
-            if (queryFields.includes(key)) {
+            if (regexFields.includes(key)) {
+                filter[key] = { $regex: query[key] };
+            } else {
                 filter[key] = query[key];
             }
         });

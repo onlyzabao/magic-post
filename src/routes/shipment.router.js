@@ -30,8 +30,8 @@ export default [{
         // },
         {
             httpMethod: "get",
-            path: "/shipment/:id",
-            method: "view"
+            path: "/shipment/track/:id",
+            method: "track"
         }
     ]
 }];
