@@ -6,61 +6,71 @@ export default [{
     methods: [
         {
             httpMethod: "post",
-            path: "/staff/create/post-office-emp",
-            method: "create_postoffice_emp",
+            path: "/staff/employee/create",
+            method: "create_employee",
             roles: [
-                staffRole.POSTOFFICE_MANAGER
-            ]
-        },
-        {
-            httpMethod: "post",
-            path: "/staff/create/post-office-mng",
-            method: "create_postoffice_mng",
-            roles: [
-                staffRole.BOSS
-            ]
-        },
-        {
-            httpMethod: "post",
-            path: "/staff/create/storage-emp",
-            method: "create_storage_emp",
-            roles: [
+                staffRole.POSTOFFICE_MANAGER,
                 staffRole.STORAGE_MANAGER
             ]
         },
         {
             httpMethod: "post",
-            path: "/staff/create/storage-mng",
-            method: "create_storage_mng",
+            path: "/staff/manager/create",
+            method: "create_manager",
             roles: [
                 staffRole.BOSS
             ]
         },
-        // {
-        //     httpMethod: "put",
-        //     path: "/staff/update/:id",
-        //     method: "update",
-        //     roles: [
-        //         staffRole.BOSS,
-        //         staffRole.STORAGE_MANAGER,
-        //         staffRole.POSTOFFICE_MANAGER
-        //     ]
-        // },
-        // {
-        //     httpMethod: "get",
-        //     path: "/staff/:id",
-        //     method: "view_document",
-        //     roles: [
-        //         "ALL"
-        //     ]
-        // },
-        // {
-        //     httpMethod: "get",
-        //     path: "/staff",
-        //     method: "view_collection",
-        //     roles: [
-        //         "ALL"
-        //     ]
-        // },
+        {
+            httpMethod: "put",
+            path: "/staff/employee/update/:id",
+            method: "update_employee",
+            roles: [
+                staffRole.POSTOFFICE_MANAGER,
+                staffRole.STORAGE_MANAGER
+            ]
+        },
+        {
+            httpMethod: "put",
+            path: "/staff/manager/update/:id",
+            method: "update_manager",
+            roles: [
+                staffRole.BOSS
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/staff/employee/:id",
+            method: "view_employee",
+            roles: [
+                staffRole.POSTOFFICE_MANAGER,
+                staffRole.STORAGE_MANAGER
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/staff/employee",
+            method: "list_employee",
+            roles: [
+                staffRole.POSTOFFICE_MANAGER,
+                staffRole.STORAGE_MANAGER
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/staff/manager/:id",
+            method: "view_manager",
+            roles: [
+                staffRole.BOSS
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/staff/manager",
+            method: "list_manager",
+            roles: [
+                staffRole.BOSS
+            ]
+        },
     ]
 }];

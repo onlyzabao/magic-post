@@ -20,7 +20,7 @@ const StaffSchema = new mongoose.Schema({
         validate: {
             validator: async function (id) {
                 const department = await mongoose.model("Department").findById(id);
-                return department !== null && department.active === true;
+                return department !== null && department.active && department.type === this.role.split("-")[0];
             },
             message: "Invalid 'department' reference."
         }

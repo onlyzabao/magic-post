@@ -50,161 +50,50 @@ class StaffService {
         return staff;
     }
 
-    async view_document(req, res, next) {
-        try {
-            const { params } = req;
+    async view(id) {
+        let staff = await Staff.findOne({ username: id });
+        if (!staff) throw errorCode.STAFF.STAFF_NOT_EXISTS;
 
-            let staff = await Staff.findOne({ username: params.id });
-            if (!staff) {
-                return res.status(404).json({
-                    ok: false,
-                    errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
-                });
+        delete staff._doc.password;
+        return staff;
+    }
+
+    async list(query) {
+        const filter = {};
+        const queryFields = ['username', 'role', 'department', 'firstname', 'lastname', 'gender', 'email', 'active'];
+        Object.keys(query).forEach(key => {
+            if (queryFields.includes(key)) {
+                filter[key] = query[key];
             }
+        });
+
+        const page = parseInt(query.page) || 1;
+        const limit = parseInt(query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        let staffs = await Staff.find(filter).skip(skip).limit(limit);
+        staffs.forEach(staff => {
             delete staff._doc.password;
+        });
 
-            const payload = {
-                staff: staff
-            }
-            res.status(200).json({
-                ok: true,
-                errorCode: errorCode.SUCCESS,
-                data: {
-                    payload: {
-                        ...payload
-                    }
-                }
-            });
-        } catch (e) {
-            return res.status(500).json({
-                ok: false,
-                errorCode: errorCode.GENERAL_ERROR,
-                message: e.message
-            });
-        }
+        return staffs;
     }
 
-    async view_collection(req, res, next) {
-        try {
-            const { query } = req;
+    async update(id, body) {
+        let staff = await Staff.findOne({ username: id });
+        if (!staff) throw errorCode.STAFF.STAFF_NOT_EXISTS;
 
-            const filter = {};
-            const queryFields = ['username', 'role', 'department', 'firstname', 'lastname', 'gender', 'email', 'active'];
-            Object.keys(query).forEach(key => {
-                if (queryFields.includes(key)) {
-                    filter[key] = query[key];
-                }
-            });
+        const validator = new StaffValidator;
+        const schema_error = validator.schema_validate(body);
+        if (schema_error) throw schema_error;
 
-            const page = parseInt(query.page) || 1;
-            const limit = parseInt(query.limit) || 10;
-            const skip = (page - 1) * limit;
+        if (body.username) delete body.username;
+        if (body.password) body.password = helper.generateHash(body.password);
+        Object.assign(staff, body);
+        staff = await staff.save();
 
-            let staffs = await Staff.find(filter).skip(skip).limit(limit);
-            staffs.forEach(staff => {
-                delete staff._doc.password;
-            });
-
-            const payload = {
-                staffs: staffs
-            }
-            res.status(200).json({
-                ok: true,
-                errorCode: errorCode.SUCCESS,
-                data: {
-                    payload: {
-                        ...payload
-                    }
-                }
-            });
-        } catch (e) {
-            return res.status(500).json({
-                ok: false,
-                errorCode: errorCode.GENERAL_ERROR,
-                message: e.message
-            });
-        }
-    }
-
-    async update(req, res, next) {
-        try {
-            const { body, params } = req;
-
-            let staff = await Staff.findOne({ username: params.id });
-            if (!staff) {
-                return res.status(404).json({
-                    ok: false,
-                    errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
-                });
-            }
-
-            if (staffRole.isManager(req.payload.role)) {
-                // let manager = await Staff.findOne({ username: req.payload.username });
-                // if (!manager) {
-                //     return res.status(404).json({
-                //         ok: false,
-                //         errorCode: errorCode.STAFF.STAFF_NOT_EXISTS
-                //     });
-                // }
-                const manager = req.user;
-                if (manager.department.toString() !== staff.department.toString()) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.AUTH.ROLE_INVALID
-                    });
-                }
-                if (body.role === staffRole.BOSS || body.role === staffRole.STORAGE_MANAGER || body.role === staffRole.POSTOFFICE_MANAGER) {
-                    return res.status(400).json({
-                        ok: false,
-                        errorCode: errorCode.AUTH.ROLE_INVALID
-                    });
-                }
-            }
-
-            const validator = new StaffValidator;
-            const schema_error = validator.schema_validate(body);
-            if (schema_error) {
-                return res.status(400).json(schema_error);
-            }
-            if (body.username) {
-                const username_error = await validator.username_validate(body);
-                if (username_error) {
-                    return res.status(400).join(username_error);
-                }
-            }
-            if (body.password) {
-                body.password = helper.generateHash(body.password);
-            }
-            if (body.role || body.department) {
-                const department_error = await validator.department_validate(body);
-                if (department_error) {
-                    return res.status(400).join(department_error);
-                }
-            }
-
-            Object.assign(staff, body);
-
-            staff = await staff.save();
-
-            const payload = {
-                staffId: staff.username
-            }
-            res.status(200).json({
-                ok: true,
-                errorCode: errorCode.SUCCESS,
-                data: {
-                    payload: {
-                        ...payload
-                    }
-                }
-            });
-        } catch (e) {
-            return res.status(500).json({
-                ok: false,
-                errorCode: errorCode.GENERAL_ERROR,
-                message: e.message
-            });
-        }
+        delete staff._doc.password;
+        return staff;
     }
 }
 
