@@ -70,7 +70,7 @@ class ShipmentService {
 
         let shipment = await Shipment.create(body);
 
-        return shipment;
+        return shipment._id;
     }
 
     async update(id, body) {
@@ -92,11 +92,11 @@ class ShipmentService {
         }
         shipment = await shipment.save();
 
-        return shipment;
+        return shipment._id;
     }
 
     async view(id) {
-        const shipment = await Shipment.
+        let shipment = await Shipment.
             findById(id).
             select({ __v: 0 });
         if (!shipment) throw errorCode.SHIPMENT.SHIPMENT_NOT_EXISTS;
@@ -105,7 +105,7 @@ class ShipmentService {
     }
 
     async track(id) {
-        const transactions = await Transaction.
+        let transactions = await Transaction.
             find({ shipment: id }).
             select({ start: 1, end: 1, pos: 1, des: 1, status: 1 }).
             populate({

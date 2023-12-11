@@ -15,7 +15,7 @@ export default class ShipmentController {
             var shipment = await ShipmentService.create(body);
 
             const transaction_body = {
-                shipment: shipment._id.toString(),
+                shipment: shipment.toString(),
                 start: Date.now(),
                 end: Date.now() + 1000,
                 receiver: req.user._id.toString(),
@@ -37,7 +37,7 @@ export default class ShipmentController {
                 }
             });
         } catch (e) {
-            if (!transaction) await Shipment.findByIdAndDelete(shipment._id)
+            if (!transaction) await Shipment.findByIdAndDelete(shipment)
 
             return res.status(400).json({
                 ok: false,

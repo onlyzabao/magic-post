@@ -46,8 +46,7 @@ class StaffService {
         body.active = true;
         let staff = await Staff.create(body);
 
-        delete staff._doc.password;
-        return staff;
+        return staff.username;
     }
 
     async view(id) {
@@ -70,11 +69,12 @@ class StaffService {
 
     async list(query) {
         const filter = {};
-        const regexFields = ['username', 'firstname', 'lastname', 'email' ];
+        const regexFields = ['username', 'firstname', 'lastname', 'email'];
+        const queryFields = ['department', 'role', 'gender', 'active'];
         Object.keys(query).forEach(key => {
             if (regexFields.includes(key)) {
                 filter[key] = { $regex: query[key] };
-            } else {
+            } else if (queryFields.includes(key)) {
                 filter[key] = query[key];
             }
         });
@@ -83,10 +83,15 @@ class StaffService {
         const limit = parseInt(query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        let staffs = await Staff.find(filter).skip(skip).limit(limit);
-        staffs.forEach(staff => {
-            delete staff._doc.password;
-        });
+        let staffs = await Staff.
+            find(filter).
+            select({
+                username: 1,
+                firstname: 1,
+                lastname: 1
+            }).
+            skip(skip).
+            limit(limit)
 
         return staffs;
     }
@@ -104,8 +109,7 @@ class StaffService {
         Object.assign(staff, body);
         staff = await staff.save();
 
-        delete staff._doc.password;
-        return staff;
+        return staff.username;
     }
 }
 
