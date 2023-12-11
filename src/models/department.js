@@ -19,7 +19,14 @@ const DepartmentSchema = new mongoose.Schema({
     },
     cfs: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Department"
+        ref: "Department",
+        validate: {
+            validator: async function (id) {
+                const department = await mongoose.model("Department").findById(id);
+                return department !== null && department.active && department.type === "STORAGE" && this.zipcode;
+            },
+            message: "Invalid 'department' reference."
+        }
     },
     zipcode: {
         type: String

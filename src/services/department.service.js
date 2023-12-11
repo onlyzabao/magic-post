@@ -29,38 +29,6 @@ class DepartmentValidator {
         }
         return null;
     }
-    async type_validate(body) {
-        if (body.type === departmentType.POSTOFFICE) {
-            if (!body.cfs || !body.zipcode) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.DEPARTMENT.POSTOFFICE_PARAMS_REQUIRED
-                }
-            }
-            let cfs = await Department.findById(body.cfs);
-            if (!cfs) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS
-                }
-            }
-            if (cfs.active === false) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.DEPARTMENT.DEPARTMENT_NOT_ACTIVE
-                }
-            }
-        }
-        if (body.type === departmentType.STORAGE) {
-            if (body.cfs || body.zipcode) {
-                return {
-                    ok: false,
-                    errorCode: errorCode.DEPARTMENT.STORAGE_PARAMS_UNREQUIRED
-                }
-            }
-        }
-        return null
-    }
 }
 
 class DepartmentService {
@@ -78,11 +46,6 @@ class DepartmentService {
             ]);
             if (schema_error) {
                 return res.status(400).json(schema_error);
-            }
-
-            const type_error = await validator.type_validate(body);
-            if (type_error) {
-                return res.status(400).json(type_error);
             }
 
             body.active = true;
