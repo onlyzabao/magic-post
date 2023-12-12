@@ -12,6 +12,29 @@ export default [{
                 staffRole.POSTOFFICE_EMMPLOYEE
             ]
         },
+        {
+            httpMethod: "get",
+            path: "/shipment/track/:id",
+            method: "track"
+        },
+        {
+            httpMethod: "get",
+            path: "/shipment/all",
+            method: "list_all",
+            roles: [
+                staffRole.BOSS
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/shipment/department/:id",
+            method: "list_from_department",
+            roles: [
+                staffRole.BOSS,
+                staffRole.POSTOFFICE_MANAGER,
+                staffRole.STORAGE_MANAGER
+            ]
+        },
         // {
         //     httpMethod: "put",
         //     path: "/shipment/update-info/:id",
@@ -20,18 +43,5 @@ export default [{
         //         staffRole.POSTOFFICE_EMMPLOYEE
         //     ]
         // },
-        // {
-        //     httpMethod: "get",
-        //     path: "/shipment",
-        //     method: "view_collection",
-        //     roles: [
-        //         "ALL"
-        //     ]
-        // },
-        {
-            httpMethod: "get",
-            path: "/shipment/track/:id",
-            method: "track"
-        }
     ]
 }];

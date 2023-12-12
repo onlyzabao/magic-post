@@ -131,7 +131,34 @@ class ShipmentService {
     }
 
     async list(query) {
-        const filter = query;
+        const filter = {};
+        const regexFields = [
+            'sender.name',
+            'sender.province',
+            'sender.district',
+            'sender.street',
+            'sender.phone',
+            'sender.zipcode',
+            'receiver.name',
+            'receiver.province',
+            'receiver.district',
+            'receiver.street',
+            'receiver.phone',
+            'receiver.zipcode',
+        ];
+        const queryFields = [
+            'meta.type',
+            'meta.start',
+            'meta.end',
+        ];
+        Object.keys(query).forEach(key => {
+            if (regexFields.includes(key)) {
+                filter[key] = { $regex: query[key] };
+            } else if (queryFields.includes(key)) {
+                filter[key] = query[key];
+            }
+        });
+
         const page = parseInt(query.page) || 1;
         const limit = parseInt(query.limit) || 10;
         const skip = (page - 1) * limit;

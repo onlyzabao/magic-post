@@ -73,31 +73,31 @@ export default class ShipmentController {
     //     }
     // }
 
-    // view_collection = async (req, res) => {
-    //     try {
-    //         const { query } = req;
-    //         var shipments = await ShipmentService.view_collection(query);
+    list_all = async (req, res) => {
+        try {
+            const { query } = req;
+            var shipments = await ShipmentService.list(query);
 
-    //         const payload = {
-    //             shipments: shipments
-    //         }
-    //         return res.status(200).json({
-    //             ok: true,
-    //             errorCode: errorCode.SUCCESS,
-    //             data: {
-    //                 payload: {
-    //                     ...payload
-    //                 }
-    //             }
-    //         });
-    //     } catch (e) {
-    //         return res.status(400).json({
-    //             ok: false,
-    //             errorCode: e.errorCode || errorCode.GENERAL_ERROR,
-    //             message: e.message
-    //         });
-    //     }
-    // }
+            const payload = {
+                shipments: shipments
+            }
+            return res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
     
     track = async (req, res) => {
         try {
