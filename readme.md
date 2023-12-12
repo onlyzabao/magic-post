@@ -43,6 +43,7 @@ npm run start
         "province": "Ho Chi Minh",
         "district": "Quan 1",
         "street": "135 Nguyen Hue",
+        "phone": "0962142715",
         // see constants/department.type.js
         "type": "POSTOFFICE",
         // if department type is STORAGE, no need for these fields below

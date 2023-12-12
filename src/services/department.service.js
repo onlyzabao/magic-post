@@ -12,9 +12,10 @@ class DepartmentValidator {
             province: Joi.string(),
             district: Joi.string(),
             street: Joi.string(),
+            phone: Joi.string().pattern(/^\d{10}$/),
             type: Joi.string().valid(...typeValues),
             cfs: Joi.string(),
-            zipcode: Joi.string(),
+            zipcode: Joi.string().pattern(/^\d{6}$/),
             active: Joi.boolean()
         });
         schema = schema.fork(requiredFields, (field) => field.required());
@@ -79,7 +80,7 @@ class DepartmentService {
     async list(query) {
         const filter = {};
         const regexFields = ['province', 'district', 'street'];
-        const queryFields = ['type', 'cfs', 'zipcode', 'active'];
+        const queryFields = ['phone', 'type', 'cfs', 'zipcode', 'active'];
         Object.keys(query).forEach(key => {
             if (regexFields.includes(key)) {
                 filter[key] = { $regex: query[key] };
