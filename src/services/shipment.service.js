@@ -13,34 +13,34 @@ class ShipmentValidator {
 
         const itemSchema = Joi.object({
             name: Joi.string().required(),
-            quantity: Joi.number().required(),
-            value: Joi.number().required(),
+            quantity: Joi.number().integer().min(0).required(),
+            value: Joi.number().integer().min(0).required(),
         });
 
         let schema = Joi.object({
             sender: Joi.object({
                 name: Joi.string(),
-                phone: Joi.string(),
+                phone: Joi.string().pattern(/^\d{10}$/),
                 province: Joi.string(),
                 district: Joi.string(),
                 street: Joi.string(),
-                zipcode: Joi.string(),
+                zipcode: Joi.string().pattern(/^\d{6}/),
             }),
             receiver: Joi.object({
                 name: Joi.string(),
-                phone: Joi.string(),
+                phone: Joi.string().pattern(/^\d{10}$/),
                 province: Joi.string(),
                 district: Joi.string(),
                 street: Joi.string(),
-                zipcode: Joi.string(),
+                zipcode: Joi.string().pattern(/^\d{6}$/),
             }),
             meta: Joi.object({
                 type: Joi.string().valid(...typeValues),
-                cost: Joi.number(),
+                cost: Joi.number().integer().min(0),
                 start: Joi.date(),
                 end: Joi.date(),
                 item: Joi.array().items(itemSchema),
-                weight: Joi.number(),
+                weight: Joi.number().min(0),
                 note: Joi.string(),
             }),
             status: Joi.string().valid(...statusValues)

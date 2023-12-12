@@ -85,6 +85,9 @@ npm run start
     ```
 
 - Thống kê hàng gửi, hàng nhận trên toàn quốc, từng điểm giao dịch hoặc điểm tập kết.
+    ```js
+    GET /shipment/all
+    ```
 
 ### Chức Năng Trưởng Điểm Tại Điểm Giao Dịch
 - Quản lý tài khoản cho giao dịch viên tại điểm giao dịch.
