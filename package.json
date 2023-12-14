@@ -5,10 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist && babel src --out-dir dist  --copy-files",
+    "build": "rm -rf dist && babel src --out-dir dist  --copy-files",
     "start": "node --trace-warnings --experimental-specifier-resolution=node dist/app.js",
-    "start:dev": "nodemon --exec babel-node --experimental-specifier-resolution=node src/app.js",
-    "rimraf": "./node_modules/rimraf/bin.js"
+    "start:dev": "nodemon --exec babel-node --experimental-specifier-resolution=node src/app.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
