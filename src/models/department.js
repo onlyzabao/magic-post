@@ -13,6 +13,10 @@ const DepartmentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    geocoding: {
+        type: [Number],
+        required: true
+    },
     phone: {
         type: String,
         required: true

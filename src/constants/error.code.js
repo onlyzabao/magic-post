@@ -113,6 +113,10 @@ export default {
         DEPARTMENT_NOT_ACTIVE: {
             errorCode: "DEPARTMENT_NOT_ACTIVE",
             message: "Failed to take action on deactivated Department"
+        },
+        ADDRESS_PARAMS_INVALID: {
+            errorCode: "ADDRESS_PARAMS_INVALID",
+            message: "Address params must include street, district and province"
         }
     },
 

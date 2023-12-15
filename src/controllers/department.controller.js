@@ -1,11 +1,16 @@
 import DepartmentService from "../services/department.service";
 import errorCode from "../constants/error.code";
+import helper from "../utils/helper";
 
 export default class DepartmentController {
     constructor() { }
     create = async (req, res) => {
         try {
             const { body } = req;
+            const query = `${body.street}, ${body.district}, ${body.province}`;
+            const { latitude, longitude } = await helper.getGeocoding(query);
+            body.geocoding = [latitude, longitude];
+
             let department = await DepartmentService.create(body);
 
             const payload = {
@@ -32,6 +37,15 @@ export default class DepartmentController {
     update = async (req, res) => {
         try {
             const { body, params } = req;
+
+            if (body.street || body.district || body.province) {
+                if (!body.street || !body.district || !body.province) throw errorCode.DEPARTMENT.ADDRESS_PARAMS_INVALID;
+
+                const query = `${body.street}, ${body.district}, ${body.province}`;
+                const { latitude, longitude } = await helper.getGeocoding(query);
+                body.geocoding = [latitude, longitude];
+            }
+
             const department = await DepartmentService.update(params.id, body);
 
             const payload = {

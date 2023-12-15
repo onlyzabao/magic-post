@@ -12,6 +12,7 @@ class DepartmentValidator {
             province: Joi.string(),
             district: Joi.string(),
             street: Joi.string(),
+            geocoding: Joi.array().items(Joi.number()).min(2).max(2),
             phone: Joi.string().pattern(/^\d{10}$/),
             type: Joi.string().valid(...typeValues),
             cfs: Joi.string(),
