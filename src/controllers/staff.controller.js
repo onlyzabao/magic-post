@@ -210,7 +210,11 @@ export default class StaffController {
     list_manager = async (req, res) => {
         try {
             const { query } = req;
-            query.role = [ staffRole.POSTOFFICE_MANAGER, staffRole.STORAGE_MANAGER ];
+            if (!query.role) {
+                query.role = [ staffRole.POSTOFFICE_MANAGER, staffRole.STORAGE_MANAGER ];
+            } else {
+                if (staffRole.isEmployee(query.role)) throw errorCode.AUTH.ROLE_INVALID;
+            }
             const managers = await StaffService.list(query);
 
             const payload = {
