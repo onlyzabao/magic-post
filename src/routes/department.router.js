@@ -22,6 +22,22 @@ export default [{
         },
         {
             httpMethod: "get",
+            path: "/department/provinces",
+            method: "get_provinces",
+            roles: [
+                staffRole.POSTOFFICE_EMPLOYEE
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/department/districts",
+            method: "get_districts",
+            roles: [
+                staffRole.POSTOFFICE_EMPLOYEE
+            ]
+        },
+        {
+            httpMethod: "get",
             path: "/department",
             method: "list",
             roles: [
@@ -35,6 +51,6 @@ export default [{
             roles: [
                 staffRole.BOSS
             ]
-        }
+        },
     ]
 }];

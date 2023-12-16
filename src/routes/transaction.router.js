@@ -9,7 +9,7 @@ export default [{
             path: "/transaction/receive-shipment",
             method: "receive_shipment",
             roles: [
-                staffRole.POSTOFFICE_EMMPLOYEE
+                staffRole.POSTOFFICE_EMPLOYEE
             ]
         },
         {
@@ -17,8 +17,8 @@ export default [{
             path: "/transaction/update/:id",
             method: "update",
             roles: [
-                staffRole.POSTOFFICE_EMMPLOYEE,
-                staffRole.STORAGE_EMMPLOYEE
+                staffRole.POSTOFFICE_EMPLOYEE,
+                staffRole.STORAGE_EMPLOYEE
             ]
         },
         // {

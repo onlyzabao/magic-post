@@ -107,6 +107,16 @@ class DepartmentService {
 
         return departments;
     }
+
+    async getProvinces() {
+        const provinces = await Department.distinct('province', { active: true });
+        return provinces;
+    }
+
+    async getDistricts(province) {
+        const districts = await Department.distinct('district', { province: province, active: true });
+        return districts;
+    }
 }
 
 export default new DepartmentService();

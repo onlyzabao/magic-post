@@ -99,7 +99,7 @@ export default class StaffController {
             const { query } = req;
             const manager = req.user;
             query.department = manager.department;
-            query.role = [ staffRole.POSTOFFICE_EMMPLOYEE, staffRole.STORAGE_EMMPLOYEE ];
+            query.role = [ staffRole.POSTOFFICE_EMPLOYEE, staffRole.STORAGE_EMPLOYEE ];
             const employees = await StaffService.list(query);
 
             const payload = {

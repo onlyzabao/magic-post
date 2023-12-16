@@ -1,6 +1,7 @@
 import DepartmentService from "../services/department.service";
 import errorCode from "../constants/error.code";
 import helper from "../utils/helper";
+import { query } from "express";
 
 export default class DepartmentController {
     constructor() { }
@@ -104,6 +105,57 @@ export default class DepartmentController {
             const payload = {
                 department: department
             }
+            return res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+
+    get_provinces = async (req, res) => {
+        try {
+            let provinces = await DepartmentService.getProvinces();
+
+            const payload = {
+                provinces: provinces
+            };
+            return res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+
+    get_districts = async (req, res) => {
+        try {
+            const { query } = req;
+            let districts = await DepartmentService.getDistricts(query.province);
+
+            const payload = {
+                districts: districts
+            };
             return res.status(200).json({
                 ok: true,
                 errorCode: errorCode.SUCCESS,

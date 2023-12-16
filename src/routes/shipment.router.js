@@ -9,7 +9,7 @@ export default [{
             path: "/shipment/create",
             method: "create",
             roles: [
-                staffRole.POSTOFFICE_EMMPLOYEE
+                staffRole.POSTOFFICE_EMPLOYEE
             ]
         },
         {
@@ -40,7 +40,7 @@ export default [{
         //     path: "/shipment/update-info/:id",
         //     method: "update_info",
         //     roles: [
-        //         staffRole.POSTOFFICE_EMMPLOYEE
+        //         staffRole.POSTOFFICE_EMPLOYEE
         //     ]
         // },
     ]

@@ -116,6 +116,12 @@ npm run start
 ### Chức Năng Giao Dịch Viên Tại Điểm Giao Dịch
 - Ghi nhận hàng cần gửi của khách (người gửi), in giấy biên nhận chuyển phát và phát cho khách hàng.
     ```js
+    GET /department/provinces // Available provinces to send shipment
+    ```
+    ```js
+    GET /department/districts?province= // Available district to send shipment
+    ```
+    ```js
     POST /shipment/create
     Body:
     {
@@ -138,8 +144,8 @@ npm run start
         },
         "meta": {
             "type": "DOCUMENT", // See constant/shipment.type.js
-            "cost": 60000,
             // Below are optional fields
+            "weight": 5000 // gram
             "note": "As quick as posible",
             "item": [
                 {

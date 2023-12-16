@@ -37,7 +37,7 @@ let randomString = function (length) {
 let getGeocoding = async function (query) {
     const access_key = 'fb11df5dbcc31ccb2e44e37afdabca40';
 
-    const response = await fetch(`http://api.positionstack.com/v1/forward?access_key=${access_key}&query=${query}`);
+    const response = await fetch(`http://api.positionstack.com/v1/forward?access_key=${access_key}&query=${query}&fields=results.latitude,results.longitude,results.confidence`);
     const data = await response.json();
     if (data.error) throw new Error(`Geocoding API: ${data.error.message}`);
 

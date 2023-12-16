@@ -1,15 +1,21 @@
 import ShipmentService from "../services/shipment.service";
 import TransactionService from "../services/transaction.service";
+import DepartmentService from "../services/department.service";
 import errorCode from "../constants/error.code";
 import shipStatus from "../constants/ship.status";
 import Shipment from "../models/shipment";
+import helper from "../utils/helper";
 import * as _ from "lodash";
+import department from "../models/department";
 
 export default class ShipmentController {
     constructor() { }
     create = async (req, res) => {
         try {
             const { body } = req;
+
+            // Todo: calculate cost
+
             body.meta.start = Date.now();
             body.status = shipStatus.PREPARING;
             var shipment = await ShipmentService.create(body);
