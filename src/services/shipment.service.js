@@ -131,8 +131,9 @@ class ShipmentService {
         return transactions;
     }
 
-    async list(query) {
+    async list(query, from=undefined) {
         const filter = {};
+        if (from) filter._id = { $in: from };
         const regexFields = [
             'sender.name',
             'sender.province',
@@ -149,14 +150,39 @@ class ShipmentService {
         ];
         const queryFields = [
             'meta.type',
+        ];
+        const rangeFields = [
             'meta.start',
             'meta.end',
-        ];
+            'meta.cost',
+            'meta.weight'
+        ]
         Object.keys(query).forEach(key => {
             if (regexFields.includes(key)) {
                 filter[key] = { $regex: query[key] };
             } else if (queryFields.includes(key)) {
                 filter[key] = query[key];
+            } else if (rangeFields.includes(key)) {
+                let [ min, max ] = query[key].split(',');
+                let range = {}
+
+                const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
+                const numberFormatRegex = /^\d+$/;
+                
+                if (min.length) {
+                    if (dateFormatRegex.test(min)) min = new Date(min);
+                    else if (numberFormatRegex.test(min)) min = Number(min);
+                    
+                    range.$gte = min;
+                }
+                if (max.length) {
+                    if (dateFormatRegex.test(max)) max = new Date(max);
+                    else if (numberFormatRegex.test(max)) max = Number(max);
+                    
+                    range.$lte = max;
+                }
+
+                filter[key] = range;
             }
         });
 

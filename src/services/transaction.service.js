@@ -39,8 +39,48 @@ class TransactionService {
         if (schema_error) throw schema_error;
 
         let transaction = await Transaction.create(body);
-        
+
         return transaction;
+    }
+
+    async list(query, select) {
+        const filter = {};
+        const queryFields = ['sender', 'receiver', 'pos', 'des', 'shipment', 'status'];
+        const rangeFields = ['start', 'end'];
+        Object.keys(query).forEach(key => {
+            if (queryFields.includes(key)) {
+                filter[key] = query[key];
+            } else if (rangeFields.includes(key)) {
+                let [min, max] = query[key].split(',');
+                let range = {}
+
+                const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
+                const numberFormatRegex = /^\d+$/;
+
+                if (min.length) {
+                    if (dateFormatRegex.test(min)) min = new Date(min);
+                    else if (numberFormatRegex.test(min)) min = Number(min);
+
+                    range.$gte = min;
+                }
+                if (max.length) {
+                    if (dateFormatRegex.test(max)) max = new Date(max);
+                    else if (numberFormatRegex.test(max)) max = Number(max);
+
+                    range.$lte = max;
+                }
+
+                filter[key] = range;
+            }
+        });
+
+        const page = parseInt(query.page) || 1;
+        const limit = parseInt(query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const transactions = await Transaction.find(filter).select(select).skip(skip).limit(limit);
+
+        return transactions;
     }
 
     async update(req, res, next) {

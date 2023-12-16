@@ -1,12 +1,10 @@
 import ShipmentService from "../services/shipment.service";
 import TransactionService from "../services/transaction.service";
-import DepartmentService from "../services/department.service";
 import errorCode from "../constants/error.code";
 import shipStatus from "../constants/ship.status";
 import Shipment from "../models/shipment";
 import helper from "../utils/helper";
 import * as _ from "lodash";
-import department from "../models/department";
 
 export default class ShipmentController {
     constructor() { }
@@ -79,10 +77,48 @@ export default class ShipmentController {
     //     }
     // }
 
-    list_all = async (req, res) => {
+    nationwide_list = async (req, res) => {
         try {
             const { query } = req;
             var shipments = await ShipmentService.list(query);
+
+            const payload = {
+                shipments: shipments
+            }
+            return res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+
+    department_list = async (req, res) => {
+        try {
+            const { query, params } = req;
+            var department;
+            if (params.id) department = params.id;
+            else department = req.user.department;
+            
+            var transactions_query = {};
+            if (params.type === 'send') {
+                transactions_query.pos = department
+            } else {
+                transactions_query.des = department
+            }
+
+            var transactions = await TransactionService.list(transactions_query, { shipment: 1 });
+            var shipments = await ShipmentService.list(query, transactions.map(transaction => transaction.shipment));
 
             const payload = {
                 shipments: shipments

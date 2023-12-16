@@ -86,7 +86,10 @@ npm run start
 
 - Thống kê hàng gửi, hàng nhận trên toàn quốc, từng điểm giao dịch hoặc điểm tập kết.
     ```js
-    GET /shipment/all
+    GET /shipment/nationwide
+    ```
+    ```js
+    GET /shipment/department/:id/:type // type: send, received
     ```
 
 ### Chức Năng Trưởng Điểm Tại Điểm Giao Dịch
@@ -112,6 +115,9 @@ npm run start
     ```
 
 - Thống kê hàng gửi, hàng nhận tại điểm giao dịch.
+    ```js
+    GET /shipment/department/:type // type: send, received
+    ```
 
 ### Chức Năng Giao Dịch Viên Tại Điểm Giao Dịch
 - Ghi nhận hàng cần gửi của khách (người gửi), in giấy biên nhận chuyển phát và phát cho khách hàng.
@@ -172,6 +178,9 @@ npm run start
     ```
 
 - Thống kê hàng đi, đến.
+    ```js
+    // Same as Post-office manager
+    ```
 
 ### Chức Năng Nhân Viên Tại Điểm Tập Kết
 - Xác nhận (đơn) hàng đi từ điểm giao dịch chuyển đến.
