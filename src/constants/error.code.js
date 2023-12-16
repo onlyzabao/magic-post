@@ -117,6 +117,10 @@ export default {
         ADDRESS_PARAMS_INVALID: {
             errorCode: "ADDRESS_PARAMS_INVALID",
             message: "Address params must include street, district and province"
+        },
+        ADDRESS_NOT_SUPPORTED: {
+            errorCode: "ADDRESS_NOT_SUPPORTED",
+            message: "Your request address hasn't been supported yet"
         }
     },
 

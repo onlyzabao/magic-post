@@ -3,6 +3,7 @@ import shipStatus from "../constants/ship.status";
 import shipmentType from "../constants/shipment.type";
 import Shipment from "../models/shipment";
 import Transaction from "../models/transaction";
+import Department from "../models/department";
 import Joi from "joi";
 
 class ShipmentValidator {
@@ -166,6 +167,43 @@ class ShipmentService {
         const shipments = await Shipment.find(filter).skip(skip).limit(limit);
 
         return shipments;
+    }
+
+    async calculateCost(pos_department, des_location, weight) {
+        let pos_geocoding = await Department.findById(pos_department).select({ geocoding: 1 });
+        if (!pos_geocoding) throw errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS;
+        else pos_geocoding = pos_geocoding.geocoding;
+
+        let des_geocoding = await Department.find(des_location).select({ geocoding: 1 });
+        if (!des_geocoding.length) throw errorCode.DEPARTMENT.ADDRESS_NOT_SUPPORTED;
+        else des_geocoding = des_geocoding[0].geocoding;
+
+        // Calculate distance
+        const R = 6371; // metres
+        const φ1 = pos_geocoding[0] * Math.PI / 180; // φ, λ in radians
+        const φ2 = des_geocoding[0] * Math.PI / 180;
+        const Δφ = (des_geocoding[0] - pos_geocoding[0]) * Math.PI / 180;
+        const Δλ = (des_geocoding[0] - pos_geocoding[0]) * Math.PI / 180;
+
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        const distance = R * c; // in kilometers
+
+        // Calculate cost
+        let extra;
+        if (!weight) extra = 1;
+        else if (weight <= 500) extra = 1.1;
+        else if (weight <= 1000) extra = 1.2;
+        else if (weight <= 2000) extra = 1.3;
+        else if (weight <= 4000) extra = 1.4;
+        else extra = 1.5;
+
+        const cost = distance * extra;
+
+        return Math.round(cost) * 100
     }
 }
 

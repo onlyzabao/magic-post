@@ -13,9 +13,9 @@ export default class ShipmentController {
     create = async (req, res) => {
         try {
             const { body } = req;
-
-            // Todo: calculate cost
-
+            body.meta.cost = await ShipmentService.calculateCost(req.user.department,
+                { province: body.receiver.province, district: body.receiver.district },
+                body.weight);
             body.meta.start = Date.now();
             body.status = shipStatus.PREPARING;
             var shipment = await ShipmentService.create(body);
@@ -104,13 +104,13 @@ export default class ShipmentController {
             });
         }
     }
-    
+
     track = async (req, res) => {
         try {
             const { params } = req;
             var shipment = await ShipmentService.view(params.id);
             var transactions = await ShipmentService.track(params.id);
-            
+
             const payload = {
                 shipment: shipment,
                 transactions: transactions
