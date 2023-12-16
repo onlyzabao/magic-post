@@ -53,32 +53,13 @@ class TransactionService {
             } else if (rangeFields.includes(key)) {
                 let [min, max] = query[key].split(',');
                 let range = {}
-
-                const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
-                const numberFormatRegex = /^\d+$/;
-
-                if (min.length) {
-                    if (dateFormatRegex.test(min)) min = new Date(min);
-                    else if (numberFormatRegex.test(min)) min = Number(min);
-
-                    range.$gte = min;
-                }
-                if (max.length) {
-                    if (dateFormatRegex.test(max)) max = new Date(max);
-                    else if (numberFormatRegex.test(max)) max = Number(max);
-
-                    range.$lte = max;
-                }
-
+                if (min.length) range.$gte = new Date(min);
+                if (max.length) range.$lte = new Date(max);
                 filter[key] = range;
             }
         });
 
-        const page = parseInt(query.page) || 1;
-        const limit = parseInt(query.limit) || 10;
-        const skip = (page - 1) * limit;
-
-        const transactions = await Transaction.find(filter).select(select).skip(skip).limit(limit);
+        const transactions = await Transaction.find(filter).select(select);
 
         return transactions;
     }

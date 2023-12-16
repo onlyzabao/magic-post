@@ -110,14 +110,13 @@ export default class ShipmentController {
             if (params.id) department = params.id;
             else department = req.user.department;
             
-            var transactions_query = {};
             if (params.type === 'send') {
-                transactions_query.pos = department
+                query.pos = department
             } else {
-                transactions_query.des = department
+                query.des = department
             }
 
-            var transactions = await TransactionService.list(transactions_query, { shipment: 1 });
+            var transactions = await TransactionService.list(query, { shipment: 1 });
             var shipments = await ShipmentService.list(query, transactions.map(transaction => transaction.shipment));
 
             const payload = {
