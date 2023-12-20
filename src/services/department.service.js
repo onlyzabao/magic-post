@@ -90,17 +90,20 @@ class DepartmentService {
             }
         });
 
+        const sortFields = query.sort || null;
         const page = parseInt(query.page) || 1;
         const limit = parseInt(query.limit) || 10;
         const skip = (page - 1) * limit;
 
         let departments = await Department.
             find(filter).
+            sort(sortFields).
             select({
                 province: 1,
                 district: 1,
                 street: 1,
-                type: 1
+                type: 1,
+                active: 1
             }).
             skip(skip).
             limit(limit);
