@@ -79,16 +79,19 @@ class StaffService {
             }
         });
 
+        const sortFields = query.sort || null;
         const page = parseInt(query.page) || 1;
         const limit = parseInt(query.limit) || 10;
         const skip = (page - 1) * limit;
 
         let staffs = await Staff.
             find(filter).
+            sort(sortFields).
             select({
                 username: 1,
                 firstname: 1,
-                lastname: 1
+                lastname: 1,
+                active: 1
             }).
             skip(skip).
             limit(limit)

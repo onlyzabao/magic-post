@@ -25,7 +25,7 @@ export default [{
             path: "/department/provinces",
             method: "get_provinces",
             roles: [
-                staffRole.POSTOFFICE_EMPLOYEE
+                "ALL"
             ]
         },
         {
@@ -33,7 +33,7 @@ export default [{
             path: "/department/districts",
             method: "get_districts",
             roles: [
-                staffRole.POSTOFFICE_EMPLOYEE
+                "ALL"
             ]
         },
         {
