@@ -79,10 +79,12 @@ class StaffService {
             }
         });
 
+        const totalDocuments = await Staff.estimatedDocumentCount();
         const sortFields = query.sort || null;
         const page = parseInt(query.page) || 1;
         const limit = parseInt(query.limit) || 10;
         const skip = (page - 1) * limit;
+        const totalPages = Math.ceil(totalDocuments / limit);
 
         let staffs = await Staff.
             find(filter).
@@ -96,7 +98,11 @@ class StaffService {
             skip(skip).
             limit(limit)
 
-        return staffs;
+        return {
+            page: page,
+            totalPages: totalPages,
+            staffs: staffs
+        }
     }
 
     async update(id, body) {

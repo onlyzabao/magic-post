@@ -91,10 +91,12 @@ class DepartmentService {
             }
         });
 
+        const totalDocuments = await Staff.estimatedDocumentCount();
         const sortFields = query.sort || null;
         const page = parseInt(query.page) || 1;
         const limit = parseInt(query.limit) || 10;
         const skip = (page - 1) * limit;
+        const totalPages = Math.ceil(totalDocuments / limit);
 
         let departments = await Department.
             find(filter).
@@ -109,7 +111,11 @@ class DepartmentService {
             skip(skip).
             limit(limit);
 
-        return departments;
+        return {
+            page: page,
+            totalPages: totalPages,
+            departments: departments
+        }
     }
 
     async getProvinces() {

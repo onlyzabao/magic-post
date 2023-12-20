@@ -77,7 +77,7 @@ export default class DepartmentController {
             const departments = await DepartmentService.list(query);
 
             const payload = {
-                departments: departments
+                ...departments
             }
             return res.status(200).json({
                 ok: true,

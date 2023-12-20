@@ -103,7 +103,7 @@ export default class StaffController {
             const employees = await StaffService.list(query);
 
             const payload = {
-                employees: employees
+                ...employees
             }
             return res.status(200).json({
                 ok: true,
@@ -218,7 +218,7 @@ export default class StaffController {
             const managers = await StaffService.list(query);
 
             const payload = {
-                managers: managers
+                ...managers
             }
             return res.status(200).json({
                 ok: true,
