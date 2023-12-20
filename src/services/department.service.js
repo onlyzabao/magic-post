@@ -1,8 +1,10 @@
 import errorCode from "../constants/error.code";
 import Department from "../models/department";
-import departmentType from "../constants/department.type";
+import Staff from "../models/staff";
 import logger from "../utils/logger";
 import Joi from "joi";
+import staffRole from "../constants/staff.role";
+import departmentType from "../constants/department.type";
 
 class DepartmentValidator {
     constructor() { }
@@ -72,10 +74,29 @@ class DepartmentService {
                     type: 1
                 }
             });
-
         if (!department) throw errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS;
 
-        return department;
+        // Join manager info
+        let manager = await Staff.
+            findOne({ department: department, role: staffRole.getManager() }).
+            select({ username: 1, firstname: 1, lastname: 1 });
+        department._doc.manager = manager;
+
+        // Join list of connected department
+        if (department.type === departmentType.STORAGE) {
+            let postoffices = await Department.
+            find({ cfs: department._id }).
+            select({
+                province: 1,
+                district: 1,
+                street: 1,
+                type: 1,
+                active: 1
+            });
+            department._doc.postoffices = postoffices;
+        }
+
+        return department._doc;
     }
 
     async list(query) {

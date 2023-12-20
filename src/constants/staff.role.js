@@ -4,7 +4,7 @@ export default {
     POSTOFFICE_MANAGER: "POSTOFFICE-MANAGER",
     STORAGE_EMPLOYEE: "STORAGE-EMPLOYEE",
     POSTOFFICE_EMPLOYEE: "POSTOFFICE-EMPLOYEE",
-    
+
     isManager: (role) => {
         return [
             "STORAGE-MANAGER",
@@ -16,5 +16,11 @@ export default {
             "STORAGE-EMPLOYEE",
             "POSTOFFICE-EMPLOYEE"
         ].includes(role);
+    },
+    getManager: () => {
+        return ["STORAGE-MANAGER", "POSTOFFICE-MANAGER"]
+    },
+    getEmployee: () => {
+        return ["STORAGE-EMPLOYEE", "POSTOFFICE-EMPLOYEE"]
     }
 }
