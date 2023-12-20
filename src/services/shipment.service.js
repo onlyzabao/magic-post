@@ -131,7 +131,7 @@ class ShipmentService {
         return transactions;
     }
 
-    async list(query, from=undefined) {
+    async list(query, from = undefined) {
         const filter = {};
         if (from) filter._id = { $in: from };
         const regexFields = [
@@ -150,6 +150,7 @@ class ShipmentService {
         ];
         const queryFields = [
             'meta.type',
+            'status'
         ];
         const rangeFields = [
             'meta.start',
@@ -163,22 +164,22 @@ class ShipmentService {
             } else if (queryFields.includes(key)) {
                 filter[key] = query[key];
             } else if (rangeFields.includes(key)) {
-                let [ min, max ] = query[key].split(',');
+                let [min, max] = query[key].split(',');
                 let range = {}
 
                 const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
                 const numberFormatRegex = /^\d+$/;
-                
+
                 if (min.length) {
                     if (dateFormatRegex.test(min)) min = new Date(min);
                     else if (numberFormatRegex.test(min)) min = Number(min);
-                    
+
                     range.$gte = min;
                 }
                 if (max.length) {
                     if (dateFormatRegex.test(max)) max = new Date(max);
                     else if (numberFormatRegex.test(max)) max = Number(max);
-                    
+
                     range.$lte = max;
                 }
 
@@ -186,13 +187,20 @@ class ShipmentService {
             }
         });
 
+        const totalDocuments = await Shipment.estimatedDocumentCount();
+        const sortFields = query.sort || null;
         const page = parseInt(query.page) || 1;
         const limit = parseInt(query.limit) || 10;
         const skip = (page - 1) * limit;
+        const totalPages = Math.ceil(totalDocuments / limit);
 
-        const shipments = await Shipment.find(filter).skip(skip).limit(limit);
+        const shipments = await Shipment.find(filter).sort(sortFields).skip(skip).limit(limit);
 
-        return shipments;
+        return {
+            page: page,
+            totalPages: totalPages,
+            shipments: shipments
+        }
     }
 
     async calculateCost(pos_department, des_location, weight) {

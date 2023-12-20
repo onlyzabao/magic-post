@@ -11,9 +11,11 @@ export default class ShipmentController {
     create = async (req, res) => {
         try {
             const { body } = req;
-            body.meta.cost = await ShipmentService.calculateCost(req.user.department,
+            body.meta.cost = await ShipmentService.calculateCost(
+                req.user.department,
                 { province: body.receiver.province, district: body.receiver.district },
-                body.weight);
+                body.weight
+            );
             body.meta.start = Date.now();
             body.status = shipStatus.PREPARING;
             var shipment = await ShipmentService.create(body);
@@ -83,7 +85,7 @@ export default class ShipmentController {
             var shipments = await ShipmentService.list(query);
 
             const payload = {
-                shipments: shipments
+                ...shipments
             }
             return res.status(200).json({
                 ok: true,
@@ -109,7 +111,7 @@ export default class ShipmentController {
             var department;
             if (params.id) department = params.id;
             else department = req.user.department;
-            
+
             if (params.type === 'send') {
                 query.pos = department
             } else {
@@ -120,7 +122,7 @@ export default class ShipmentController {
             var shipments = await ShipmentService.list(query, transactions.map(transaction => transaction.shipment));
 
             const payload = {
-                shipments: shipments
+                ...shipments
             }
             return res.status(200).json({
                 ok: true,
