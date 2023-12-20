@@ -131,9 +131,10 @@ class ShipmentService {
         return transactions;
     }
 
-    async list(query, from = undefined) {
+    async list(query, src=undefined) {
         const filter = {};
-        if (from) filter._id = { $in: from };
+        if (src) filter._id = { $in: src };
+        
         const regexFields = [
             'sender.name',
             'sender.province',
@@ -194,7 +195,11 @@ class ShipmentService {
         const skip = (page - 1) * limit;
         const totalPages = Math.ceil(totalDocuments / limit);
 
-        const shipments = await Shipment.find(filter).sort(sortFields).skip(skip).limit(limit);
+        const shipments = await Shipment.
+            find(filter).
+            sort(sortFields).
+            skip(skip).
+            limit(limit);
 
         return {
             page: page,

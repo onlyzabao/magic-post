@@ -43,7 +43,7 @@ class TransactionService {
         return transaction;
     }
 
-    async list(query, select) {
+    async list(query) {
         const filter = {};
         const queryFields = ['sender', 'receiver', 'pos', 'des', 'shipment', 'status'];
         const rangeFields = ['start', 'end'];
@@ -59,7 +59,7 @@ class TransactionService {
             }
         });
 
-        const transactions = await Transaction.find(filter).select(select);
+        const transactions = await Transaction.find(filter);
 
         return transactions;
     }

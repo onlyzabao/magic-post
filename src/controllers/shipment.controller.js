@@ -5,6 +5,7 @@ import shipStatus from "../constants/ship.status";
 import Shipment from "../models/shipment";
 import helper from "../utils/helper";
 import * as _ from "lodash";
+import Transaction from "../models/transaction";
 
 export default class ShipmentController {
     constructor() { }
@@ -108,18 +109,13 @@ export default class ShipmentController {
     department_list = async (req, res) => {
         try {
             const { query, params } = req;
-            var department;
-            if (params.id) department = params.id;
-            else department = req.user.department;
 
-            if (params.type === 'send') {
-                query.pos = department
-            } else {
-                query.des = department
-            }
+            // List shipments that belong to a department
+            const department = params.id ? params.id : req.user.department;
+            var transactions = await Transaction.distinct('shipment', { [params.type === 'send' ? 'pos' : 'des']: department });
 
-            var transactions = await TransactionService.list(query, { shipment: 1 });
-            var shipments = await ShipmentService.list(query, transactions.map(transaction => transaction.shipment));
+            // Query from that listed shipments
+            var shipments = await ShipmentService.list(query, transactions);
 
             const payload = {
                 ...shipments
