@@ -1,27 +1,116 @@
 import TransactionService from "../services/transaction.service";
-import ShipmentService from "../services/shipment.service";
+import errorCode from "../constants/error.code";
 import shipStatus from "../constants/ship.status";
+import Department from "../models/department";
+import transactionType from "../constants/transaction.type";
+import departmentType from "../constants/department.type";
+import staffRole from "../constants/staff.role";
+import Shipment from "../models/shipment";
 
 export default class TransactionController {
     constructor() { }
-    receive_shipment = async (req, res) => {
-        req.body.meta.start = Date.now();
-        req.body.status = shipStatus.PREPARING;
-        await ShipmentService.create(req, res);
+    list = async (req, res) => {
+        try {
+            const { query, params } = req;
+            query.type = params.type;
+            query[params.view] = req.user.department;
 
-        req.body = {
-            shipment: res.data.payload.shipmentId,
-            start: Date.now(),
-            end: Date.now() + 1000,
-            receiver: req.user._id.toString(),
-            des: req.user.department.toString(),
-            status: shipStatus.RECEIVED
-        };
-        await TransactionService.create(req, res);
+            var transactions = await TransactionService.list(query);
 
-        if (res.status !== 200) {
-            await Shipment.findByIdAndDelete(res.data.payload.shipmentId);
+            const payload = {
+                ...transactions
+            }
+            return res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
+                message: e.message
+            });
         }
     }
-    update = async (req, res) => TransactionService.update(req, res);
+
+    push = async (req, res) => {
+        try {
+            const { body, params } = req;
+
+            const postoffice = await Department.findById(req.user.department);
+            for (const element of body) {
+                element.type = params.type;
+                element.sender = req.user.username.toString();
+                element.start = Date.now();
+                element.pos = postoffice._id.toString();
+                element.status = shipStatus.SEND;
+
+                if (params.type === transactionType.PtS) {
+                    element.des = postoffice.cfs.toString();
+                    await Shipment.findByIdAndUpdate(element.shipment, { status: shipStatus.DELIVERING });
+                } else if (params.type === transactionType.StS) {
+                    let shipment = await Shipment.findById(element.shipment);
+                    let department = await Department.findOne({ type: departmentType.STORAGE, province: shipment.receiver.province });
+                    element.des = department._id.toString();
+                } else if (params.type === transactionType.StP) {
+                    let shipment = await Shipment.findById(element.shipment);
+                    let department = await Department.findOne({ type: departmentType.POSTOFFICE, province: shipment.receiver.province, district: shipment.receiver.district });
+                    element.des = department._id.toString();
+                }
+            };
+            var transactions = await TransactionService.create(body);
+
+            const payload = {
+                ...transactions
+            }
+            return res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+
+    update = async (req, res) => {
+        try {
+            const { body } = req;
+            body.data.receiver = req.user.username;
+            body.data.end = Date.now();
+            var transactions = await TransactionService.update_many(body.ids, body.data);
+
+            const payload = {
+                ...transactions
+            }
+            return res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
 }

@@ -2,6 +2,7 @@ import ShipmentService from "../services/shipment.service";
 import TransactionService from "../services/transaction.service";
 import errorCode from "../constants/error.code";
 import shipStatus from "../constants/ship.status";
+import transactionType from "../constants/transaction.type";
 import Shipment from "../models/shipment";
 import helper from "../utils/helper";
 import * as _ from "lodash";
@@ -22,10 +23,11 @@ export default class ShipmentController {
             var shipment = await ShipmentService.create(body);
 
             const transaction_body = {
+                type: transactionType.CtP,
                 shipment: shipment.toString(),
                 start: Date.now(),
                 end: Date.now() + 1000,
-                receiver: req.user._id.toString(),
+                receiver: req.user.username.toString(),
                 des: req.user.department.toString(),
                 status: shipStatus.RECEIVED
             };

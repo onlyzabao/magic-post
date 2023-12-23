@@ -141,7 +141,8 @@ export default {
             message: "Failed to find your request Transaction"
         },
     },
-    
+
+    URL_NOT_FOUND: "URL_NOT_FOUND",
     GENERAL_ERROR: "GENERAL_ERROR",
     SUCCESS: "SUCCESS",
     PARAMS_INVALID: "PARAMS_INVALID"

@@ -188,7 +188,7 @@ class ShipmentService {
             }
         });
 
-        const totalDocuments = await Shipment.estimatedDocumentCount();
+        const totalDocuments = await Shipment.countDocuments(filter);
         const sortFields = query.sort || null;
         const page = parseInt(query.page) || 1;
         const limit = parseInt(query.limit) || 10;
