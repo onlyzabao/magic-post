@@ -291,7 +291,7 @@ npm run start
     {
         ids: [ ... ], // list of transactions id
         data: {
-            status: "DELIVERING"
+            status: "RECEIVED"
         } 
     }
     ```
