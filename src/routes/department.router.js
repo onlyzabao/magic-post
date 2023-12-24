@@ -40,9 +40,9 @@ export default [{
             httpMethod: "get",
             path: "/department",
             method: "list",
-            roles: [
-                staffRole.BOSS
-            ]
+            // roles: [
+            //     staffRole.BOSS
+            // ]
         },
         {
             httpMethod: "get",
