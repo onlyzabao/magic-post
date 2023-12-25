@@ -6,6 +6,7 @@ import transactionType from "../constants/transaction.type";
 import departmentType from "../constants/department.type";
 import staffRole from "../constants/staff.role";
 import Shipment from "../models/shipment";
+import Transaction from "../models/transaction";
 
 export default class TransactionController {
     constructor() { }
@@ -88,7 +89,13 @@ export default class TransactionController {
 
     update = async (req, res) => {
         try {
-            const { body } = req;
+            const { body, params } = req;
+
+            if (params.type === transactionType.PtC) {
+                let shipments = await Transaction.distinct('shipment', { _id: { $in: body.ids }});
+                await Shipment.updateMany({ _id: { $in: shipments} }, { status: shipStatus.RECEIVED })
+            }
+
             body.data.receiver = req.user.username;
             body.data.end = Date.now();
             var transactions = await TransactionService.update_many(body.ids, body.data);
