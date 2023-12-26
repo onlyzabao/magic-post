@@ -8,7 +8,7 @@ import { forEach } from "lodash";
 class TransactionValidator {
     constructor() { }
     schema_validate(body, requiredFields = []) {
-        const statusValues = Object.values(shipStatus);
+        const statusValues = [ shipStatus.SENT, shipStatus.RECEIVED, shipStatus.HOLD, shipStatus.PASSED ];
         const transactionValue = Object.values(transactionType);
         let schema = Joi.object({
             type: Joi.string().valid(...transactionValue),

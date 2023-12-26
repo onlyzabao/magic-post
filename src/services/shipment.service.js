@@ -9,7 +9,7 @@ import Joi from "joi";
 class ShipmentValidator {
     constructor() { }
     schema_validate(body, requiredFields = []) {
-        const statusValues = Object.values(shipStatus);
+        const statusValues = [ shipStatus.PREPARING, shipStatus.DELIVERING, shipStatus.RECEIVED, shipStatus.HOLD ];
         const typeValues = Object.values(shipmentType);
 
         const itemSchema = Joi.object({
