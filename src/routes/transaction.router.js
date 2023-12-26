@@ -6,19 +6,29 @@ export default [{
     methods: [
         {
             httpMethod: "post",
-            path: "/transaction/receive-shipment",
-            method: "receive_shipment",
+            path: "/transaction/:type",
+            method: "push",
             roles: [
-                staffRole.POSTOFFICE_EMMPLOYEE
+                staffRole.POSTOFFICE_EMPLOYEE,
+                staffRole.STORAGE_EMPLOYEE
             ]
         },
         {
             httpMethod: "put",
-            path: "/transaction/update/:id",
+            path: "/transaction/:type",
             method: "update",
             roles: [
-                staffRole.POSTOFFICE_EMMPLOYEE,
-                staffRole.STORAGE_EMMPLOYEE
+                staffRole.POSTOFFICE_EMPLOYEE,
+                staffRole.STORAGE_EMPLOYEE
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/transaction/:type/:view",
+            method: "list",
+            roles: [
+                staffRole.POSTOFFICE_EMPLOYEE,
+                staffRole.STORAGE_EMPLOYEE
             ]
         },
         // {

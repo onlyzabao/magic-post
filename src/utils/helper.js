@@ -34,6 +34,23 @@ let randomString = function (length) {
     return result;
 }
 
+let getGeocoding = async function (query) {
+    const access_key = 'fb11df5dbcc31ccb2e44e37afdabca40';
+
+    const response = await fetch(`http://api.positionstack.com/v1/forward?access_key=${access_key}&query=${query}&fields=results.latitude,results.longitude,results.confidence`);
+    const data = await response.json();
+    if (data.error) throw new Error(`Geocoding API: ${data.error.message}`);
+
+    let mostConfidentLocation = null;
+    for (const location of data.data) {
+        if (!mostConfidentLocation || location.confidence > mostConfidentLocation.confidence) {
+            mostConfidentLocation = location;
+        }
+    }
+
+    return mostConfidentLocation;
+}
+
 
 export default {
     generateHash: generateHash,
@@ -41,5 +58,6 @@ export default {
     comparePassword: comparePassword,
     genUuid: genUuid,
     toMd5: toMd5,
-    randomString: randomString
+    randomString: randomString,
+    getGeocoding: getGeocoding,
 }

@@ -1,8 +1,10 @@
 import errorCode from "../constants/error.code";
 import Department from "../models/department";
-import departmentType from "../constants/department.type";
+import Staff from "../models/staff";
 import logger from "../utils/logger";
 import Joi from "joi";
+import staffRole from "../constants/staff.role";
+import departmentType from "../constants/department.type";
 
 class DepartmentValidator {
     constructor() { }
@@ -12,6 +14,7 @@ class DepartmentValidator {
             province: Joi.string(),
             district: Joi.string(),
             street: Joi.string(),
+            geocoding: Joi.array().items(Joi.number()).min(2).max(2),
             phone: Joi.string().pattern(/^\d{10}$/),
             type: Joi.string().valid(...typeValues),
             cfs: Joi.string(),
@@ -71,10 +74,9 @@ class DepartmentService {
                     type: 1
                 }
             });
-
         if (!department) throw errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS;
 
-        return department;
+        return department._doc;
     }
 
     async list(query) {
@@ -89,22 +91,41 @@ class DepartmentService {
             }
         });
 
+        const totalDocuments = await Staff.countDocuments(filter);
+        const sortFields = query.sort || null;
         const page = parseInt(query.page) || 1;
         const limit = parseInt(query.limit) || 10;
         const skip = (page - 1) * limit;
+        const totalPages = Math.ceil(totalDocuments / limit);
 
         let departments = await Department.
             find(filter).
+            sort(sortFields).
             select({
                 province: 1,
                 district: 1,
                 street: 1,
-                type: 1
+                type: 1,
+                active: 1
             }).
             skip(skip).
             limit(limit);
 
-        return departments;
+        return {
+            page: page,
+            totalPages: totalPages,
+            departments: departments
+        }
+    }
+
+    async getProvinces() {
+        const provinces = await Department.distinct('province', { active: true });
+        return provinces;
+    }
+
+    async getDistricts(province) {
+        const districts = await Department.distinct('district', { province: province, active: true });
+        return districts;
     }
 }
 

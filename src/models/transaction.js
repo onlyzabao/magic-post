@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const TransactionSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        required: true
+    },
     shipment: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -14,22 +18,20 @@ const TransactionSchema = new mongoose.Schema({
         }
     },
     sender: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Staff",
+        type: String,
         validate: {
-            validator: async function (id) {
-                const staff = await mongoose.model("Staff").findById(id);
+            validator: async function (username) {
+                const staff = await mongoose.model("Staff").find({ username: username });
                 return staff !== null;
             },
             message: "Invalid 'sender' reference."
         }
     },
     receiver: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Staff",
+        type: String,
         validate: {
-            validator: async function (id) {
-                const staff = await mongoose.model("Staff").findById(id);
+            validator: async function (username) {
+                const staff = await mongoose.model("Staff").find({ username: username });
                 return staff !== null;
             },
             message: "Invalid 'receiver' reference."

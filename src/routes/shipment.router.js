@@ -9,7 +9,7 @@ export default [{
             path: "/shipment/create",
             method: "create",
             roles: [
-                staffRole.POSTOFFICE_EMMPLOYEE
+                staffRole.POSTOFFICE_EMPLOYEE
             ]
         },
         {
@@ -19,18 +19,25 @@ export default [{
         },
         {
             httpMethod: "get",
-            path: "/shipment/all",
-            method: "list_all",
+            path: "/shipment/nationwide",
+            method: "nationwide_list",
             roles: [
                 staffRole.BOSS
             ]
         },
         {
             httpMethod: "get",
-            path: "/shipment/department/:id",
-            method: "list_from_department",
+            path: "/shipment/department/:id/:type",
+            method: "department_list",
             roles: [
-                staffRole.BOSS,
+                staffRole.BOSS
+            ]
+        },
+        {
+            httpMethod: "get",
+            path: "/shipment/department/:type",
+            method: "department_list",
+            roles: [
                 staffRole.POSTOFFICE_MANAGER,
                 staffRole.STORAGE_MANAGER
             ]
@@ -40,7 +47,7 @@ export default [{
         //     path: "/shipment/update-info/:id",
         //     method: "update_info",
         //     roles: [
-        //         staffRole.POSTOFFICE_EMMPLOYEE
+        //         staffRole.POSTOFFICE_EMPLOYEE
         //     ]
         // },
     ]

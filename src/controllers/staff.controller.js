@@ -99,11 +99,11 @@ export default class StaffController {
             const { query } = req;
             const manager = req.user;
             query.department = manager.department;
-            query.role = [ staffRole.POSTOFFICE_EMMPLOYEE, staffRole.STORAGE_EMMPLOYEE ];
+            query.role = staffRole.getEmployee();
             const employees = await StaffService.list(query);
 
             const payload = {
-                employees: employees
+                ...employees
             }
             return res.status(200).json({
                 ok: true,
@@ -210,11 +210,15 @@ export default class StaffController {
     list_manager = async (req, res) => {
         try {
             const { query } = req;
-            query.role = [ staffRole.POSTOFFICE_MANAGER, staffRole.STORAGE_MANAGER ];
+            if (!query.role) {
+                query.role = staffRole.getManager();
+            } else {
+                if (staffRole.isEmployee(query.role)) throw errorCode.AUTH.ROLE_INVALID;
+            }
             const managers = await StaffService.list(query);
 
             const payload = {
-                managers: managers
+                ...managers
             }
             return res.status(200).json({
                 ok: true,

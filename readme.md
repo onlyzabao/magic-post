@@ -85,6 +85,12 @@ npm run start
     ```
 
 - Thống kê hàng gửi, hàng nhận trên toàn quốc, từng điểm giao dịch hoặc điểm tập kết.
+    ```js
+    GET /shipment/nationwide
+    ```
+    ```js
+    GET /shipment/department/:id/:type // type: send, received
+    ```
 
 ### Chức Năng Trưởng Điểm Tại Điểm Giao Dịch
 - Quản lý tài khoản cho giao dịch viên tại điểm giao dịch.
@@ -109,9 +115,20 @@ npm run start
     ```
 
 - Thống kê hàng gửi, hàng nhận tại điểm giao dịch.
+    ```js
+    GET /shipment/department/:type // type: send, received
+    ```
 
 ### Chức Năng Giao Dịch Viên Tại Điểm Giao Dịch
 - Ghi nhận hàng cần gửi của khách (người gửi), in giấy biên nhận chuyển phát và phát cho khách hàng.
+    
+    Note: Sử dụng api để tạo QR code khi in giấy biên nhận.
+    ```js
+    GET /department/provinces // Available provinces to send shipment
+    ```
+    ```js
+    GET /department/districts?province= // Available district to send shipment
+    ```
     ```js
     POST /shipment/create
     Body:
@@ -135,8 +152,8 @@ npm run start
         },
         "meta": {
             "type": "DOCUMENT", // See constant/shipment.type.js
-            "cost": 60000,
             // Below are optional fields
+            "weight": 5000 // gram
             "note": "As quick as posible",
             "item": [
                 {
@@ -150,11 +167,72 @@ npm run start
 
     ```
 - Tạo đơn chuyển hàng gửi đến điểm tập kết mỗi/trước khi đem hàng gửi đến điểm tập kết.
+
+    Note: In danh sách đơn hàng đã đõng gói, sẵn sàng để gửi lên điểm tập kết.
+    ```js
+    GET /transaction/ctp/des // Received shipment from customer
+    ```
+    ```js
+    POST /transaction/pts // Push list of shipments to storage
+    Body:
+    [
+        {
+            shipment: "654df7b079626d8a284e9a75"
+        },
+        {
+            shipment: "654df7b079626d8a284e9a75"
+        }
+    ]
+    ```
+    ```js
+    GET /transaction/pts/pos // Send shipments to storage.
+    ```
+
 - Xác nhận (đơn) hàng về từ điểm tập kết.
+    ```js
+    GET /transaction/stp/des // Received shipment from storage
+    ```
+    ```js
+    PUT /transaction/stp
+    Body:
+    {
+        ids: [ ... ], // list of transactions id
+        data: {
+            status: "RECEIVED" // or HOLD
+        } 
+    }
+    ```
 - Tạo đơn hàng cần chuyển đến tay người nhận.
-- Xác nhận hàng đã chuyển đến tay người nhận theo .
-- Xác nhận hàng không chuyển được đến người nhận và trả lại điểm giao dịch.
-- Thống kê các hàng đã chuyển thành công, các hàng chuyển không thành công và trả lại điểm giao dịch.
+    ```js
+    GET /transaction/stp/des // Received shipment from storage
+    ```
+    ```js
+    POST /transaction/ptc
+    Body:
+    [
+        {
+            shipment: "654df7b079626d8a284e9a75"
+        },
+        {
+            shipment: "654df7b079626d8a284e9a75"
+        }
+    ]
+    ```
+
+- Xác nhận hàng đã chuyển đến tay người nhận theo. Xác nhận hàng không chuyển được đến người nhận và trả lại điểm giao dịch. Thống kê các hàng đã chuyển thành công, các hàng chuyển không thành công và trả lại điểm giao dịch.
+    ```js
+    GET /transaction/ptc/pos // Send shipment to customer
+    ```
+    ```js
+    PUT /transaction/ptc
+    Body:
+    {
+        ids: [ ... ], // list of transactions id
+        data: {
+            status: "RECEIVED" // or HOLD
+        } 
+    }
+    ```
 
 ### Chức Năng Trưởng Điểm Tại Điểm Tập Kết
 - Quản lý tài khoản cho nhân viên viên tại điểm tập kết.
@@ -163,12 +241,80 @@ npm run start
     ```
 
 - Thống kê hàng đi, đến.
+    ```js
+    // Same as Post-office manager
+    ```
 
 ### Chức Năng Nhân Viên Tại Điểm Tập Kết
 - Xác nhận (đơn) hàng đi từ điểm giao dịch chuyển đến.
+    ```js
+    GET /transaction/pts/des // Received shipment from postoffice
+    ```
+    ```js
+    PUT /transaction/pts
+    Body:
+    {
+        ids: [ ... ], // list of transactions id
+        data: {
+            status: "RECEIVED"
+        } 
+    }
+    ```
+
 - Tạo đơn chuyển hàng đến điểm tập kết đích (ứng với điểm giao dịch đích, tức điểm giao dịch phụ trách vùng ứng với địa chỉ của người nhận).
+    ```js
+    GET /transaction/pts/des // Received shipment from postoffice
+    ```
+    ```js
+    POST /transaction/sts
+    Body:
+    [
+        {
+            shipment: "654df7b079626d8a284e9a75"
+        },
+        {
+            shipment: "654df7b079626d8a284e9a75"
+        }
+    ]
+    ```
+    ```js
+    GET /transaction/sts/pos // Send shipments to storage
+    ```
+   
 - Xác nhận (đơn) hàng nhận về từ điểm tập kết khác.
+    ```js
+    GET /transaction/sts/des // Received shipment from storage
+    ```
+    ```js
+    PUT /transaction/sts
+    Body:
+    {
+        ids: [ ... ], // list of transactions id
+        data: {
+            status: "RECEIVED"
+        } 
+    }
+    ```
+
 - Tạo đơn chuyển hàng đến điểm giao dịch đích.
+    ```js
+    GET /transaction/sts/des // Received shipment from storage
+    ```
+    ```js
+    POST /transaction/stp
+    Body:
+    [
+        {
+            shipment: "654df7b079626d8a284e9a75"
+        },
+        {
+            shipment: "654df7b079626d8a284e9a75"
+        }
+    ]
+    ```
+    ```js
+    GET /transaction/stp/pos
+    ```
 
 ### Chức Năng Cho Khách Hàng
 - Tra cứu trạng thái và tiến trình chuyển phát của kiện hàng mình gửi.

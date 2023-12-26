@@ -113,6 +113,14 @@ export default {
         DEPARTMENT_NOT_ACTIVE: {
             errorCode: "DEPARTMENT_NOT_ACTIVE",
             message: "Failed to take action on deactivated Department"
+        },
+        ADDRESS_PARAMS_INVALID: {
+            errorCode: "ADDRESS_PARAMS_INVALID",
+            message: "Address params must include street, district and province"
+        },
+        ADDRESS_NOT_SUPPORTED: {
+            errorCode: "ADDRESS_NOT_SUPPORTED",
+            message: "Your request address hasn't been supported yet"
         }
     },
 
@@ -133,7 +141,8 @@ export default {
             message: "Failed to find your request Transaction"
         },
     },
-    
+
+    URL_NOT_FOUND: "URL_NOT_FOUND",
     GENERAL_ERROR: "GENERAL_ERROR",
     SUCCESS: "SUCCESS",
     PARAMS_INVALID: "PARAMS_INVALID"
