@@ -1,6 +1,6 @@
 export default {
     PREPARING: "PREPARING",
-    SEND: "SEND",
+    SENT: "SENT",
     DELIVERING: "DELIVERING",
     RECEIVED: "RECEIVED",
     HOLD: "HOLD"

@@ -49,7 +49,7 @@ export default class TransactionController {
                 element.sender = req.user.username.toString();
                 element.start = Date.now();
                 element.pos = postoffice._id.toString();
-                element.status = shipStatus.SEND;
+                element.status = shipStatus.SENT;
 
                 if (params.type === transactionType.PtS) {
                     element.des = postoffice.cfs.toString();
