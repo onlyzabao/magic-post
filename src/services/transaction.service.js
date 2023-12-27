@@ -60,7 +60,7 @@ class TransactionService {
         return transaction;
     }
 
-    async list(query) {
+    async list(query, select='') {
         const filter = {};
         const queryFields = ['sender', 'receiver', 'pos', 'des', 'shipment', 'status', 'type'];
         const rangeFields = ['start', 'end'];
@@ -103,9 +103,7 @@ class TransactionService {
                     type: 1
                 }
             }).
-            select({
-                type: 0
-            }).
+            select(select).
             sort(sortFields).
             skip(skip).
             limit(limit);
