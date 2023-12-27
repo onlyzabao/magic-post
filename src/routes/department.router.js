@@ -24,17 +24,17 @@ export default [{
             httpMethod: "get",
             path: "/department/provinces",
             method: "get_provinces",
-            roles: [
-                "ALL"
-            ]
+            // roles: [
+            //     "ALL"
+            // ]
         },
         {
             httpMethod: "get",
             path: "/department/districts",
             method: "get_districts",
-            roles: [
-                "ALL"
-            ]
+            // roles: [
+            //     "ALL"
+            // ]
         },
         {
             httpMethod: "get",
