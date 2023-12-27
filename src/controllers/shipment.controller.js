@@ -4,6 +4,7 @@ import errorCode from "../constants/error.code";
 import shipStatus from "../constants/ship.status";
 import transactionType from "../constants/transaction.type";
 import Shipment from "../models/shipment";
+import Department from "../models/department";
 import helper from "../utils/helper";
 import * as _ from "lodash";
 import Transaction from "../models/transaction";
@@ -13,10 +14,20 @@ export default class ShipmentController {
     create = async (req, res) => {
         try {
             const { body } = req;
+
+            let pos_department = await Department.findById(req.user.department).select({ geocoding: 1 });
+            
+            let des_department = await Department.find({
+                province: body.receiver.province,
+                district: body.receiver.district
+            }).select({ geocoding: 1 });
+            if (!des_department.length) throw errorCode.DEPARTMENT.ADDRESS_NOT_SUPPORTED;
+            else des_department = des_department[0];
+
             body.meta.cost = await ShipmentService.calculateCost(
-                req.user.department,
-                { province: body.receiver.province, district: body.receiver.district },
-                body.weight
+                pos_department.geocoding,
+                des_department.geocoding,
+                body.weight || 0
             );
             body.meta.start = Date.now();
             body.status = shipStatus.PREPARING;
@@ -149,6 +160,51 @@ export default class ShipmentController {
             const payload = {
                 shipment: shipment,
                 transactions: transactions
+            }
+            return res.status(200).json({
+                ok: true,
+                errorCode: errorCode.SUCCESS,
+                data: {
+                    payload: {
+                        ...payload
+                    }
+                }
+            });
+        } catch (e) {
+            return res.status(400).json({
+                ok: false,
+                errorCode: e.errorCode || errorCode.GENERAL_ERROR,
+                message: e.message
+            });
+        }
+    }
+
+    calculate_cost = async (req, res) => {
+        try {
+            const { body } = req;
+
+            let pos_department = await Department.find({
+                province: body.sender.province,
+                district: body.sender.district
+            }).select({ geocoding: 1 });
+            if (!pos_department.length) throw errorCode.DEPARTMENT.ADDRESS_NOT_SUPPORTED;
+            else pos_department = pos_department[0];
+
+            let des_department = await Department.find({
+                province: body.receiver.province,
+                district: body.receiver.district
+            }).select({ geocoding: 1 });
+            if (!des_department.length) throw errorCode.DEPARTMENT.ADDRESS_NOT_SUPPORTED;
+            else des_department = des_department[0];
+
+            const cost = await ShipmentService.calculateCost(
+                pos_department.geocoding,
+                des_department.geocoding,
+                body.weight || 0
+            );
+
+            const payload = {
+                cost: cost
             }
             return res.status(200).json({
                 ok: true,

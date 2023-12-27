@@ -42,13 +42,10 @@ export default [{
                 staffRole.STORAGE_MANAGER
             ]
         },
-        // {
-        //     httpMethod: "put",
-        //     path: "/shipment/update-info/:id",
-        //     method: "update_info",
-        //     roles: [
-        //         staffRole.POSTOFFICE_EMPLOYEE
-        //     ]
-        // },
+        {
+            httpMethod: "post",
+            path: "/shipment/estimate-cost",
+            method: "calculate_cost"
+        },
     ]
 }];
