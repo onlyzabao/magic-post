@@ -49,21 +49,50 @@ export default class TransactionController {
                 element.sender = req.user.username.toString();
                 element.start = Date.now();
                 element.pos = postoffice._id.toString();
-                element.status = shipStatus.SEND;
+                element.status = shipStatus.SENT;
 
-                if (params.type === transactionType.PtS) {
+                var shipment = await Shipment.findById(element.shipment);
+
+                if (element.type === transactionType.PtS) {
+                    // Post-office to Storage
                     element.des = postoffice.cfs.toString();
-                    await Shipment.findByIdAndUpdate(element.shipment, { status: shipStatus.DELIVERING });
-                } else if (params.type === transactionType.StS) {
-                    let shipment = await Shipment.findById(element.shipment);
-                    let department = await Department.findOne({ type: departmentType.STORAGE, province: shipment.receiver.province });
+                    shipment.status = shipStatus.DELIVERING;
+                    await shipment.save();
+                }
+
+                if (element.type === transactionType.StS) {
+                    // Storage to storage
+                    let department = await Department.findOne({
+                        type: departmentType.STORAGE,
+                        province: shipment.receiver.province
+                    });
                     element.des = department._id.toString();
-                } else if (params.type === transactionType.StP) {
-                    let shipment = await Shipment.findById(element.shipment);
-                    let department = await Department.findOne({ type: departmentType.POSTOFFICE, province: shipment.receiver.province, district: shipment.receiver.district });
+                    if (element.des === element.pos) {
+                        element.type === transactionType.StP;
+                    }
+                }
+
+                if (element.type === transactionType.StP) {
+                    // Storage to Post-office
+                    let department = await Department.findOne({
+                        type: departmentType.POSTOFFICE,
+                        province: shipment.receiver.province,
+                        district: shipment.receiver.district
+                    });
                     element.des = department._id.toString();
                 }
+
+                await Transaction.findOneAndUpdate(
+                    {
+                        shipment: shipment._id,
+                        des: postoffice._id,
+                    },
+                    {
+                        status: shipStatus.PASSED
+                    }
+                );
             };
+
             var transactions = await TransactionService.create(body);
 
             const payload = {
@@ -92,8 +121,9 @@ export default class TransactionController {
             const { body, params } = req;
 
             if (params.type === transactionType.PtC) {
-                let shipments = await Transaction.distinct('shipment', { _id: { $in: body.ids }});
-                await Shipment.updateMany({ _id: { $in: shipments} }, { status: shipStatus.RECEIVED })
+                // Update shipment status
+                let shipments = await Transaction.distinct('shipment', { _id: { $in: body.ids } });
+                await Shipment.updateMany({ _id: { $in: shipments } }, { status: body.data.status })
             }
 
             body.data.receiver = req.user.username;

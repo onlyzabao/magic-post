@@ -9,7 +9,7 @@ import Joi from "joi";
 class ShipmentValidator {
     constructor() { }
     schema_validate(body, requiredFields = []) {
-        const statusValues = Object.values(shipStatus);
+        const statusValues = [ shipStatus.PREPARING, shipStatus.DELIVERING, shipStatus.RECEIVED, shipStatus.HOLD ];
         const typeValues = Object.values(shipmentType);
 
         const itemSchema = Joi.object({
@@ -208,15 +208,7 @@ class ShipmentService {
         }
     }
 
-    async calculateCost(pos_department, des_location, weight) {
-        let pos_geocoding = await Department.findById(pos_department).select({ geocoding: 1 });
-        if (!pos_geocoding) throw errorCode.DEPARTMENT.DEPARTMENT_NOT_EXISTS;
-        else pos_geocoding = pos_geocoding.geocoding;
-
-        let des_geocoding = await Department.find(des_location).select({ geocoding: 1 });
-        if (!des_geocoding.length) throw errorCode.DEPARTMENT.ADDRESS_NOT_SUPPORTED;
-        else des_geocoding = des_geocoding[0].geocoding;
-
+    async calculateCost(pos_geocoding, des_geocoding, weight) {
         // Calculate distance
         const R = 6371; // metres
         const φ1 = pos_geocoding[0] * Math.PI / 180; // φ, λ in radians
@@ -233,12 +225,11 @@ class ShipmentService {
 
         // Calculate cost
         let extra;
-        if (!weight) extra = 1;
-        else if (weight <= 500) extra = 1.1;
-        else if (weight <= 1000) extra = 1.2;
-        else if (weight <= 2000) extra = 1.3;
-        else if (weight <= 4000) extra = 1.4;
-        else extra = 1.5;
+        if (weight <= 500) extra = 1;
+        else if (weight <= 1000) extra = 1.1;
+        else if (weight <= 2000) extra = 1.2;
+        else if (weight <= 4000) extra = 1.3;
+        else extra = 1.4;
 
         const cost = distance * extra;
 

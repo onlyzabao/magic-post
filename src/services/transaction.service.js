@@ -8,7 +8,7 @@ import { forEach } from "lodash";
 class TransactionValidator {
     constructor() { }
     schema_validate(body, requiredFields = []) {
-        const statusValues = Object.values(shipStatus);
+        const statusValues = [ shipStatus.SENT, shipStatus.RECEIVED, shipStatus.HOLD, shipStatus.PASSED ];
         const transactionValue = Object.values(transactionType);
         let schema = Joi.object({
             type: Joi.string().valid(...transactionValue),
@@ -60,7 +60,7 @@ class TransactionService {
         return transaction;
     }
 
-    async list(query) {
+    async list(query, select='') {
         const filter = {};
         const queryFields = ['sender', 'receiver', 'pos', 'des', 'shipment', 'status', 'type'];
         const rangeFields = ['start', 'end'];
@@ -103,9 +103,7 @@ class TransactionService {
                     type: 1
                 }
             }).
-            select({
-                type: 0
-            }).
+            select(select).
             sort(sortFields).
             skip(skip).
             limit(limit);

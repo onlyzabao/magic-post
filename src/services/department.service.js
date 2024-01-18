@@ -106,7 +106,8 @@ class DepartmentService {
                 district: 1,
                 street: 1,
                 type: 1,
-                active: 1
+                active: 1,
+                geocoding: 1
             }).
             skip(skip).
             limit(limit);
